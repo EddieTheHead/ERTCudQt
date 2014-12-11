@@ -1,18 +1,18 @@
 # Include common configurations.
-include(QMC/QMapControl.pri)
+include(QMapControl.pri)
 
 # Windows specific options.
 win32 {
     # Capture whether this is a release/debug build.
     CONFIG(debug, debug|release) {
         # Add QMapControl library.
-#        LIBS += -L $(PREFIX)/QMC/QMapControl/lib -lqmapcontrold1
-    LIBS += -L D:/github/ERTCudQt/QMC/QMapControl/lib -lqmapcontrold1
+#        LIBS += -L $(PREFIX)/src/QMapControl/lib -lqmapcontrold1
+    LIBS += -L D:/github/ERTCudQt/src/QMapControl/lib -lqmapcontrold1
     }
     CONFIG(release, debug|release) {
         # Add QMapControl library.
-        LIBS += -L D:/github/ERTCudQt/QMapControl/lib -lqmapcontrol1
-#        LIBS += -L $(PREFIX)/QMC/QMapControl/lib -lqmapcontrol1
+        LIBS += -L../../src/QMapControl/lib -lqmapcontrol1
+#        LIBS += -L $(PREFIX)/src/QMapControl/lib -lqmapcontrol1
     }
 }
 
@@ -21,11 +21,11 @@ unix {
     # Capture whether this is a release/debug build.
     CONFIG(debug, debug|release) {
         # Add QMapControl library.
-        LIBS += -L QMC/QMapControl/lib -lqmapcontrold
+        LIBS += -L src/QMapControl/lib -lqmapcontrold
     }
     CONFIG(release, debug|release) {
         # Add QMapControl library.
-        LIBS += -L QMC/QMapControl/lib -lqmapcontrol
+        LIBS += -L src/QMapControl/lib -lqmapcontrol
     }
 }
 
@@ -36,7 +36,7 @@ macx {
 }
 
 # Include paths.
-INCLUDEPATH += QMC/
+INCLUDEPATH += src/
 
 # Include GDAL-required files.
 contains(DEFINES, QMC_GDAL) {
@@ -56,8 +56,8 @@ contains(DEFINES, QMC_GDAL) {
 #DESTDIR = bin
 
 # Ensure libs are copied to bin directory.
-#target_libs.commands = -$(INSTALL_FILE) $$system_path(../../QMC/QMapControl/lib/*) $$system_path(bin/.)
-target_libs.commands = -$(INSTALL_FILE) $$system_path(QMC/QMapControl/lib/*) $$system_path(bin/.)
+#target_libs.commands = -$(INSTALL_FILE) $$system_path(../../src/QMapControl/lib/*) $$system_path(bin/.)
+target_libs.commands = -$(INSTALL_FILE) $$system_path(src/QMapControl/lib/*) $$system_path(bin/.)
 QMAKE_EXTRA_TARGETS += target_libs
 
 # Capture whether this is a release/debug build.
