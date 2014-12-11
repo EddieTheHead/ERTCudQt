@@ -18,9 +18,6 @@ TEMPLATE = app
 CONFIG += c++11 \
 
 
-SUBDIRS += \
-    QMapControl\
-
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -42,5 +39,5 @@ FORMS    += mainwindow.ui \
     PortSettingsWindow.ui \
     mapwindow.ui
 
-#OTHER_FILES += QMC.pri \
-#            src/QMapControl.pri
+OTHER_FILES += QMC.pri \
+            src/QMapControl.pri

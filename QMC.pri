@@ -53,7 +53,7 @@ contains(DEFINES, QMC_GDAL) {
 }
 
 # Target install directory.
-DESTDIR = bin
+#DESTDIR = bin
 
 # Ensure libs are copied to bin directory.
 #target_libs.commands = -$(INSTALL_FILE) $$system_path(../../QMC/QMapControl/lib/*) $$system_path(bin/.)
@@ -68,7 +68,7 @@ CONFIG(release, debug|release) {
     TARGET_TYPE = release
 }
 
-# Install details./
+# Install details.
 # Has a prefix been specified?
 !isEmpty(prefix) {
     # Change prefix to PREFIX.
