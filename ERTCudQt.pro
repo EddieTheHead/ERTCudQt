@@ -40,4 +40,4 @@ FORMS    += mainwindow.ui \
     mapwindow.ui
 
 OTHER_FILES += QMC.pri \
-            QMapControl.pri
+            src/QMapControl.pri
