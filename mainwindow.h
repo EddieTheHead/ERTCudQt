@@ -22,7 +22,7 @@ public:
 private:
     Ui::MainWindow *ui;
     PortMonitor *monitor;
-    MapWindow *mapWindow;
+    //MapWindow *mapWindow;
 private slots:
     void showData(QByteArray data);
 };
