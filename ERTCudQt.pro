@@ -6,8 +6,8 @@
 
 QT       += core gui serialport opengl
 
-#mapy
-include(QMC.pri)
+##mapy
+#include(QMC.pri)
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,9 +17,6 @@ TEMPLATE = app
 #kompilacja c++11
 CONFIG += c++11 \
 
-
-SUBDIRS += \
-    QMapControl\
 
 
 SOURCES += main.cpp\
