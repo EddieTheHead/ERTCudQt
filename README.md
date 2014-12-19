@@ -21,15 +21,15 @@ Aby qtCreator współpracował trzeba mieć na dysku wkompilowaną bibliotekę q
 i dodane do systemu zmienne z adresami jej bibliotek. 
 
 Dodawanie zmiennych qmapcontrol w systemie:
-W windowsie wchodzimy przez prawoklik na 'Mój komputer' -> 'Właściwości' -> 'Zaawansowane ustwiewnia systemu' ->'Zaawansowane'
--> 'Zmienne środowiskowe' -> 'nowa' (obojętnie czy dla komputera, czy użytkownika)
-Na linuxie robi się tak jak tu:
+W windowsie wchodzimy przez prawoklik na 'Mój komputer' -> 'Właściwości' -> 'Zaawansowane ustwiewnia systemu'->'Zaawansowane'-> 'Zmienne środowiskowe' -> 'nowa' (obojętnie czy dla komputera, czy użytkownika)
+
+a linuxie robi się tak jak tu:
 http://jakilinux.org/konsola/zmienne-srodowiskowe/#
 
-Zmienna: 								przykładowy adres:
-QMAPCONTROL_RELEASE_DLL                 D:\QMapControl\build-QMapControl-Desktop_Qt_5_2_1_MinGW_32bit-Release\src\QMapControl\lib
+Zmienna: 						          przykładowy adres:
+QMAPCONTROL_RELEASE_DLL       D:\QMapControl\build-QMapControl-Desktop_Qt_5_2_1_MinGW_32bit-Release\src\QMapControl\lib
 QMAPCONTROL_DEBUG_DLL					D:\QMapControl\build-QMapControl-Desktop_Qt_5_2_1_MinGW_32bit-Debug\src\QMapControl\lib
-QMAPCONTROL_SRC							D:\QMapControl\QMapControl\src\QMapControl
+QMAPCONTROL_SRC							  D:\QMapControl\QMapControl\src\QMapControl
 
 Nie jestem pewien w jakim formacie zapisują się biblioteki na linuxach, ale sama nazwa zmiennej zostanie taka sama. 
 
