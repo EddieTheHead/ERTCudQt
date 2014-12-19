@@ -2,9 +2,13 @@
 #define MAPWINDOW_H
 
 #include <QDialog>
+
 #include "QMapControl.h"
 #include "LayerMapAdapter.h"
 #include <MapAdapterOSM.h>
+#include <GeometryLineString.h>
+#include <LayerGeometry.h>
+#include <GeometryPoint.h>
 
 using namespace qmapcontrol;
 
@@ -19,10 +23,15 @@ class MapWindow : public QDialog
 public:
     explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
-
+public slots:
+    void newGPSPosition(float longitude, float latitude);
+private slots:
+    void drawPath();
 private:
     Ui::MapWindow *ui;
     QMapControl *map;
+    std::shared_ptr<LayerGeometry> pathLayer;
+    std::vector<std::shared_ptr<GeometryPoint>> points;
 };
 
 #endif // MAPWINDOW_H

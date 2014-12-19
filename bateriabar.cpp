@@ -68,6 +68,17 @@ void BateriaBar::resizeGL(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
+float BateriaBar::getSize() const
+{
+    return size;
+}
+
+void BateriaBar::setSize(float value)
+{
+    size = value;
+}
+
+
 
 void BateriaBar::setValue(int value)
 {

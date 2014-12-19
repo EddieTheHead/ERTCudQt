@@ -10,6 +10,9 @@ class BateriaBar : public QGLWidget
 public:
     explicit BateriaBar(QWidget *parent = 0);
 
+    float getSize() const;
+    void setSize(float value);
+
 signals:
 
 public slots:
