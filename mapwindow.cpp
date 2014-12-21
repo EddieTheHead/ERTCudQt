@@ -12,9 +12,10 @@ MapWindow::MapWindow(QWidget *parent) :
     map = new QMapControl(QSizeF(400.0, 590.0));
     //ustawiam obiekt map window na środku okienka
     ui->verticalLayout->addWidget(map);
+    map->enablePersistentCache();
     //dodaję warstwę z obrazkami map
     map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Open Street Map", std::make_shared<MapAdapterOSM>()));
-    map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>()));
+    //map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
     //dodaję warstwę z przebiegiem trasy
     map->addLayer(pathLayer);    
     setWindowTitle("Mapa");
@@ -32,8 +33,12 @@ MapWindow::~MapWindow()
 
 void MapWindow::newGPSPosition(float longitude, float latitude)
 {
-    points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
-    drawPath();
+    if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
+    {
+        points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
+        drawPath();
+        map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
+    }
 }
 
 void MapWindow::drawPath()
