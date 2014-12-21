@@ -6,6 +6,7 @@
 #include "QMapControl.h"
 #include "LayerMapAdapter.h"
 #include <MapAdapterOSM.h>
+#include <MapAdapterGoogle.h>
 #include <GeometryLineString.h>
 #include <LayerGeometry.h>
 #include <GeometryPoint.h>

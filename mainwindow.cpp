@@ -12,7 +12,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonConnect,SIGNAL(clicked()),monitor,SLOT(openSerialPort()));
     connect(ui->pushButtonPreferences,SIGNAL(clicked()),monitor->settings,SLOT(show()));
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),monitor,SLOT(closeSerialPort()));
-    connect(ui->pushButtonMap,SIGNAL(clicked()),mapWindow,SLOT(show()));
     //sygnały wysyłane, przez monitor portu
     connect(monitor,SIGNAL(newDataArrived(QByteArray)),this,SLOT(showData(QByteArray)));
     connect(monitor,SIGNAL(newLeftVerticaTriggerValue(int)),ui->verticalSliderLeftVerticalTrigger,SLOT(setValue(int)));
@@ -30,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderLeftHorizontalTrigger->setMaximum(100);
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
-
 }
 
 
@@ -53,3 +51,19 @@ void MainWindow::showData(QByteArray data)
     ui->plainTextEditLog->insertPlainText(text);
 
 }
+
+void MainWindow::on_pushButtonMap_clicked()
+{
+    if(!mapWindow->isVisible())
+    {
+        mapWindow->show();
+        ui->pushButtonMap->setText("Ukryj mapę");
+       // mapWindow->move(QPoint(pos().x(), pos().y() + height()));
+    }
+    else
+    {
+        mapWindow->hide();
+        ui->pushButtonMap->setText("Pokaż mapę");
+    }
+}
+

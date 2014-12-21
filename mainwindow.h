@@ -25,6 +25,7 @@ private:
     MapWindow *mapWindow;
 private slots:
     void showData(QByteArray data);
+    void on_pushButtonMap_clicked();
 };
 
 #endif // MAINWINDOW_H
