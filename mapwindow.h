@@ -25,7 +25,7 @@ public:
     explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
 public slots:
-    void newGPSPosition(float longitude, float latitude);
+    void newGPSPosition(float latitude, float longitude);
 private slots:
     void drawPath();
 private:

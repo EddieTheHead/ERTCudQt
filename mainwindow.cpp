@@ -29,6 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderLeftHorizontalTrigger->setMaximum(100);
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
+
+    fakeTrackTimer.setInterval(1000);
+    fakeTrackTimer.setSingleShot(false);
+    connect(ui->pushButtonFakeGPS,SIGNAL(clicked()),&fakeTrackTimer,SLOT(start()));
 }
 
 
@@ -64,6 +68,15 @@ void MainWindow::on_pushButtonMap_clicked()
     {
         mapWindow->hide();
         ui->pushButtonMap->setText("Pokaż mapę");
+    }
+}
+
+void MainWindow::onFakeTrackTimer()
+{
+    static int i = 0;
+    if(i <fakeGpsPoints.size())
+    {
+        emit newGPSData(fakeGpsPoints[i].lat,fakeGpsPoints[i].lon);
     }
 }
 
