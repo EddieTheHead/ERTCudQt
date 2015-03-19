@@ -37,7 +37,9 @@ FORMS    += mainwindow.ui \
 
 win32:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
 else:win32:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
-else:unix: LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
+
+unix:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
+else:unix:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
 
 INCLUDEPATH += $(QMAPCONTROL_SRC)
 DEPENDPATH += $(QMAPCONTROL_SRC)
