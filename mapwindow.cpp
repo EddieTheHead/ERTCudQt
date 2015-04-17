@@ -1,6 +1,10 @@
 #include "mapwindow.h"
 #include "ui_mapwindow.h"
 
+#include <GeometryLineString.h>
+#include <GeometryPointCircle.h>
+#include <LayerMapAdapter.h>
+
 using namespace qmapcontrol;
 
 MapWindow::MapWindow(QWidget *parent) :
@@ -23,6 +27,36 @@ MapWindow::MapWindow(QWidget *parent) :
     PointWorldCoord PUT(16.950932,52.402205);
     map->setMapFocusPoint(PUT);
     map->setZoom(13);
+
+    //dodaję warstwę z punktami
+
+    std::shared_ptr<LayerGeometry> CheckPointsLayer(std::make_shared<LayerGeometry>("Custom Layer"));
+        map->addLayer(CheckPointsLayer);
+
+
+           std::vector<std::shared_ptr<GeometryPoint>> dots;
+        QPen dots_pen(QColor(0,255,0));
+            dots_pen.setWidth(3);
+            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.273573, 50.016315), QSizeF(15.0, 15.0)));
+            dots.back()->setPen(dots_pen);
+            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Eleonorenstraße");
+            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.275145, 50.016992), QSizeF(15.0, 15.0)));
+            dots.back()->setPen(dots_pen);
+            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Johannes-Goßner-Straße");
+            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.270476, 50.021426), QSizeF(15.0, 15.0)));
+            dots.back()->setPen(dots_pen);
+            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Ruthof");
+
+            // Add the Points and the QPen to a LineString.
+            std::vector<PointWorldCoord> raw_points;
+            for(const auto& point : dots)
+            {
+                // Add the point.
+                raw_points.push_back(point->coord());
+
+                // Also add the point to the custom layer.
+                CheckPointsLayer->addGeometry(point);
+            }
 }
 
 MapWindow::~MapWindow()
