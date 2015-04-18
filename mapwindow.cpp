@@ -13,7 +13,7 @@ MapWindow::MapWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     //nowy obiekt widgetu map
-    map = new QMapControl(QSizeF(400.0, 590.0));
+    map = new QMapControl(QSizeF(950.0, 540.0));
     //ustawiam obiekt map window na środku okienka
     ui->verticalLayout->addWidget(map);
     map->enablePersistentCache();
@@ -25,8 +25,9 @@ MapWindow::MapWindow(QWidget *parent) :
     setWindowTitle("Mapa");
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
-    map->setMapFocusPoint(PUT);
-    map->setZoom(13);
+     PointWorldCoord ERC(20.452138, 50.790648);
+    map->setMapFocusPoint(ERC);
+    map->setZoom(14);
 
     //dodaję warstwę z punktami
 
@@ -37,15 +38,11 @@ MapWindow::MapWindow(QWidget *parent) :
            std::vector<std::shared_ptr<GeometryPoint>> dots;
         QPen dots_pen(QColor(0,255,0));
             dots_pen.setWidth(3);
-            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.273573, 50.016315), QSizeF(15.0, 15.0)));
+            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(20.452138, 50.790648), QSizeF(15.0, 15.0)));
             dots.back()->setPen(dots_pen);
-            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Eleonorenstraße");
-            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.275145, 50.016992), QSizeF(15.0, 15.0)));
-            dots.back()->setPen(dots_pen);
-            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Johannes-Goßner-Straße");
-            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(8.270476, 50.021426), QSizeF(15.0, 15.0)));
-            dots.back()->setPen(dots_pen);
-            dots.back()->setMetadata("name", "Wiesbaden-Mainz-Kastel, Ruthof");
+            dots.back()->setMetadata("name", "Podzamcze 45, Checiny - ERC challenge");
+
+
 
             // Add the Points and the QPen to a LineString.
             std::vector<PointWorldCoord> raw_points;
