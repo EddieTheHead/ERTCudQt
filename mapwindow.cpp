@@ -31,28 +31,23 @@ MapWindow::MapWindow(QWidget *parent) :
 
     //dodaję warstwę z punktami
 
-    std::shared_ptr<LayerGeometry> CheckPointsLayer(std::make_shared<LayerGeometry>("Custom Layer"));
-        map->addLayer(CheckPointsLayer);
+    std::shared_ptr<LayerGeometry> dots(std::make_shared<LayerGeometry>("Custom Layer"));
+        map->addLayer(dots);
+
+       if(!readCheckpoints("E:\\checkPoints.txt"))
+       {
+           qDebug()<<"Nie wczytano punktów";
+       }
 
 
-           std::vector<std::shared_ptr<GeometryPoint>> dots;
         QPen dots_pen(QColor(0,255,0));
             dots_pen.setWidth(3);
-            dots.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(20.452138, 50.790648), QSizeF(15.0, 15.0)));
-            dots.back()->setPen(dots_pen);
-            dots.back()->setMetadata("name", "Podzamcze 45, Checiny - ERC challenge");
 
 
-
-            // Add the Points and the QPen to a LineString.
-            std::vector<PointWorldCoord> raw_points;
-            for(const auto& point : dots)
+            for(const auto& point : checkPointsList)
             {
-                // Add the point.
-                raw_points.push_back(point->coord());
-
                 // Also add the point to the custom layer.
-                CheckPointsLayer->addGeometry(point);
+                dots->addGeometry(point);
             }
 }
 
@@ -88,4 +83,31 @@ void MapWindow::drawPath()
     pathString->setPen(pen);
     pen.setWidth(5);
     pathLayer->addGeometry(pathString);
+}
+
+bool MapWindow::readCheckpoints(QString fileName)
+{
+    QFile file(fileName);
+    if(!file.open(QFile::ReadOnly))
+    {
+        return 0;
+    }
+
+    QTextStream in(&file);
+
+    QPen dots_pen(QColor(0,255,0));
+        dots_pen.setWidth(3);
+
+    while(!in.atEnd())
+    {
+        QString line = in.readLine();
+        QStringList fields = line.split("&", QString::SkipEmptyParts);
+
+            checkPointsList.emplace_back(std::make_shared<GeometryPointCircle>(PointWorldCoord(fields[1].toFloat(),fields[2].toFloat() ), QSizeF(15.0, 15.0)));
+            checkPointsList.back()->setPen(dots_pen);
+            checkPointsList.back()->setMetadata(fields[0].toStdString(), "");//""Podzamcze 45, Checiny - ERC challenge"""");
+    }
+
+    file.close();
+    return 1;
 }
