@@ -4,6 +4,7 @@
 #include <GeometryLineString.h>
 #include <GeometryPointCircle.h>
 #include <LayerMapAdapter.h>
+#include <GeometryPointImage.h>
 
 using namespace qmapcontrol;
 
@@ -19,9 +20,12 @@ MapWindow::MapWindow(QWidget *parent) :
     map->enablePersistentCache();
     //dodaję warstwę z obrazkami map
     map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Open Street Map", std::make_shared<MapAdapterOSM>()));
+
     //map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
     //dodaję warstwę z przebiegiem trasy
-    map->addLayer(pathLayer);    
+    pathLayer=std::make_shared<LayerGeometry>("Base layer");
+    map->addLayer(pathLayer);
+
     setWindowTitle("Mapa");
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
@@ -49,6 +53,7 @@ MapWindow::MapWindow(QWidget *parent) :
                 // Also add the point to the custom layer.
                 dots->addGeometry(point);
             }
+            drawDirection(16.950932,52.402205);
 }
 
 MapWindow::~MapWindow()
@@ -82,6 +87,7 @@ void MapWindow::drawPath()
     QPen pen(Qt::red);
     pathString->setPen(pen);
     pen.setWidth(5);
+
     pathLayer->addGeometry(pathString);
 }
 
@@ -110,4 +116,19 @@ bool MapWindow::readCheckpoints(QString fileName)
 
     file.close();
     return 1;
+}
+
+void MapWindow::drawDirection(float latitude, float longitude)
+{
+    PointWorldCoord pointCoord(latitude,longitude);
+    QImage pointerImage("pointer.png");
+    if(pointerImage.isNull())
+        qDebug()<<"Nie ma obrazka";
+
+
+    auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(pointerImage));
+    pathLayer->addGeometry(roverOrientation);
+
+
+
 }

@@ -28,6 +28,7 @@ public slots:
     void newGPSPosition(float latitude, float longitude);
 private slots:
     void drawPath();
+    void drawDirection(float latitude, float longitude);
 private:
     Ui::MapWindow *ui;
     QMapControl *map;
@@ -35,6 +36,8 @@ private:
     std::vector<std::shared_ptr<GeometryPoint>> points;
     bool readCheckpoints(QString fileName); // Funkcja sczytująca punkty z pliku
     std::vector<std::shared_ptr<GeometryPoint>> checkPointsList;
+
 };
+
 
 #endif // MAPWINDOW_H
