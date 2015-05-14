@@ -29,34 +29,12 @@ MapWindow::MapWindow(QWidget *parent) :
     setWindowTitle("Mapa");
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
-     PointWorldCoord ERC(20.452138, 50.790648);
-    map->setMapFocusPoint(ERC);
+    PointWorldCoord ERC(20.452138, 50.790648);
+    map->setMapFocusPoint(PUT);
     map->setZoom(14);
 
-    //dodaję warstwę z punktami
-
-    std::shared_ptr<LayerGeometry> dots(std::make_shared<LayerGeometry>("Custom Layer"));
-        map->addLayer(dots);
-
-       if(!readCheckpoints("E:\\checkPoints.txt"))
-       {
-           qDebug()<<"Nie wczytano punktów";
-       }
-
-
-        QPen dots_pen(QColor(0,255,0));
-            dots_pen.setWidth(3);
-
-
-            for(const auto& point : checkPointsList)
-            {
-                // Also add the point to the custom layer.
-                dots->addGeometry(point);
-            }
-
-
-            pointerImage = QImage("pointer.png");
-            drawDirection(16.950932,52.402205,45);
+    pointerImage = QImage("pointer.png");
+    drawDirection(16.950932,52.402205,45);
 
 }
 
@@ -117,7 +95,6 @@ bool MapWindow::readCheckpoints(QString fileName)
             checkPointsList.back()->setPen(dots_pen);
             checkPointsList.back()->setMetadata(fields[0].toStdString(), "");//""Podzamcze 45, Checiny - ERC challenge"""");
     }
-
     file.close();
     return 1;
 }
@@ -132,10 +109,32 @@ void MapWindow::drawDirection(float latitude, float longitude, float angle = 0)
         return;
     }
     QTransform transMatrix;
+    transMatrix.scale(0.2,0.2);
     transMatrix.rotate(angle);
     QImage rotatedImage = pointerImage.transformed(transMatrix);
 
     auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(rotatedImage));
     pathLayer->addGeometry(roverOrientation);
 
+}
+
+void MapWindow::drawCheckpoints()
+{
+    //dodaję warstwę z punktami
+    std::shared_ptr<LayerGeometry> dots(std::make_shared<LayerGeometry>("Custom Layer"));
+    map->addLayer(dots);
+
+    if(!readCheckpoints("E:\\checkPoints.txt"))
+    {
+        qDebug()<<"Nie wczytano punktów";
+    }
+
+    QPen dots_pen(QColor(0,255,0));
+    dots_pen.setWidth(3);
+
+    for(const auto& point : checkPointsList)
+    {
+        // Also add the point to the custom layer.
+        dots->addGeometry(point);
+    }
 }

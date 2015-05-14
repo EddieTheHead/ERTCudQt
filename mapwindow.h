@@ -29,6 +29,8 @@ public slots:
 private slots:
     void drawPath();
     void drawDirection(float latitude, float longitude, float angle);
+    void drawCheckpoints();
+
 private:
     Ui::MapWindow *ui;
     QMapControl *map;
