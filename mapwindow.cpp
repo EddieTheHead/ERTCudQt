@@ -53,7 +53,11 @@ MapWindow::MapWindow(QWidget *parent) :
                 // Also add the point to the custom layer.
                 dots->addGeometry(point);
             }
-            drawDirection(16.950932,52.402205);
+
+
+            pointerImage = QImage("pointer.png");
+            drawDirection(16.950932,52.402205,45);
+
 }
 
 MapWindow::~MapWindow()
@@ -118,17 +122,20 @@ bool MapWindow::readCheckpoints(QString fileName)
     return 1;
 }
 
-void MapWindow::drawDirection(float latitude, float longitude)
+void MapWindow::drawDirection(float latitude, float longitude, float angle = 0)
 {
     PointWorldCoord pointCoord(latitude,longitude);
-    QImage pointerImage("pointer.png");
+
     if(pointerImage.isNull())
+    {
         qDebug()<<"Nie ma obrazka";
+        return;
+    }
+    QTransform transMatrix;
+    transMatrix.rotate(angle);
+    QImage rotatedImage = pointerImage.transformed(transMatrix);
 
-
-    auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(pointerImage));
+    auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(rotatedImage));
     pathLayer->addGeometry(roverOrientation);
-
-
 
 }
