@@ -26,6 +26,7 @@ public:
     ~MapWindow();
 public slots:
     void newGPSPosition(float latitude, float longitude);
+    void newCompassAngle(float angle);
 private slots:
     void drawPath();
     void drawDirection(float latitude, float longitude, float angle);

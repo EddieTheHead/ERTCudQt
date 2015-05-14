@@ -33,6 +33,7 @@ signals:
     void newRightVerticaTriggerValue(int);
     void newRightHorizontalTriggerValue(int);
     void newRightTriggerString(QString);
+    void newCompassValue(float);
 
     void newControlsStateString(QString);
 private slots:
@@ -41,6 +42,7 @@ private slots:
     void handleError(QSerialPort::SerialPortError error);
     void onErrorTimer();
 private:
+    void computeCompasValue(float lastArrivedValue);
     QTimer *errorTimer;
     qint16 mergeBytes(char first, char second);
     QSerialPort *port;
@@ -51,6 +53,7 @@ private:
     char LastBytes2; //ostatni z bajtów ramki
     LoggingDevice *logger;
     LoggingDevice *loggerNatural;
+    QQueue<float> LastTenCompassValues;
 };
 
 #endif // PORTMONITOR_H

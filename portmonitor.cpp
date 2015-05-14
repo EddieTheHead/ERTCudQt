@@ -143,6 +143,25 @@ void PortMonitor::onErrorTimer()
     QMessageBox::warning(parent,"Przekroczenie czasu","Od nadejścia ostatniej poprawnej ramki minęła ponad sekunda");
 }
 
+void PortMonitor::computeCompasValue(float lastArrivedValue)
+{
+    //Obiekt inercyjny pierwszego rzędu :)
+
+    //dodaje na koniec kolejki nową wartość kompasu
+    LastTenCompassValues.enqueue(lastArrivedValue);
+    //usunięcie najstarszej wartości
+    LastTenCompassValues.dequeue();
+    //średnia z ostatnich dziesięciu pomiarów kompasu
+    float mean = 0;
+    for(const auto &i : LastTenCompassValues)
+    {
+        mean += i;
+    }
+    mean /= LastTenCompassValues.size();
+
+    emit newCompassValue(mean);
+}
+
 qint16 PortMonitor::mergeBytes(char first, char second)
 {
     qint16 a = (unsigned char) first;

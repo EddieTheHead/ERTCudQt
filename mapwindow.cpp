@@ -26,13 +26,17 @@ MapWindow::MapWindow(QWidget *parent) :
     pathLayer=std::make_shared<LayerGeometry>("Base layer");
     map->addLayer(pathLayer);
 
+
     setWindowTitle("Mapa");
+
+
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
     PointWorldCoord ERC(20.452138, 50.790648);
     map->setMapFocusPoint(PUT);
     map->setZoom(14);
 
+    //testowe
     pointerImage = QImage("pointer.png");
     drawDirection(16.950932,52.402205,45);
 
@@ -52,6 +56,11 @@ void MapWindow::newGPSPosition(float longitude, float latitude)
         drawPath();
         map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
     }
+}
+
+void MapWindow::newCompassAngle(float angle)
+{
+    drawDirection(points.back()->coord().latitude(),points.back()->coord().longitude(),angle);
 }
 
 void MapWindow::drawPath()
