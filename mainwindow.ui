@@ -107,9 +107,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="pushButtonFakeGPS">
+       <widget class="QPushButton" name="pushButtonCheckpoints">
         <property name="text">
-         <string>Fałszywy Gps</string>
+         <string>Plik checkpointów </string>
         </property>
        </widget>
       </item>

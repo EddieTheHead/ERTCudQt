@@ -31,9 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
 
-    fakeTrackTimer.setInterval(1000);
-    fakeTrackTimer.setSingleShot(false);
-    connect(ui->pushButtonFakeGPS,SIGNAL(clicked()),&fakeTrackTimer,SLOT(start()));
+    connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText()));
+
 }
 
 
@@ -59,25 +58,15 @@ void MainWindow::showData(QByteArray data)
 
 void MainWindow::on_pushButtonMap_clicked()
 {
-    if(!mapWindow->isVisible())
-    {
-        mapWindow->show();
-        ui->pushButtonMap->setText("Ukryj mapę");
-       // mapWindow->move(QPoint(pos().x(), pos().y() + height()));
-    }
-    else
-    {
-        mapWindow->hide();
-        ui->pushButtonMap->setText("Pokaż mapę");
-    }
+    if(!mapWindow->isVisible()) mapWindow->show();
+    else mapWindow->hide();
+    setMapButtonText();
+
 }
 
-void MainWindow::onFakeTrackTimer()
+
+void MainWindow::setMapButtonText()
 {
-    static int i = 0;
-    if(i <fakeGpsPoints.size())
-    {
-        emit newGPSData(fakeGpsPoints[i].lat,fakeGpsPoints[i].lon);
-    }
+    if(!mapWindow->isVisible()) ui->pushButtonMap->setText("Pokaż mapę");
+    else ui->pushButtonMap->setText("Ukryj Mapę");
 }
-

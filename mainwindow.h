@@ -2,10 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "portmonitor.h"
 #include "bateriabar.h"
 #include "mapwindow.h"
+
+
 namespace Ui {
 class MainWindow;
 }
@@ -27,16 +30,9 @@ private slots:
     void showData(QByteArray data);
     void on_pushButtonMap_clicked();
     void onFakeTrackTimer();
+    void setMapButtonText();
+    void on_pushButtonCheckpoints_clicked();
 
-private:
-    //fałszywy sygnał z danymi GPS do testów
-    QTimer fakeTrackTimer;
-    struct fakePoint{
-        fakePoint(float n,float t){lon =n; lat =t;}
-        float lon;
-        float lat;
-    };
-    QList<fakePoint> fakeGpsPoints;
 };
 
 #endif // MAINWINDOW_H
