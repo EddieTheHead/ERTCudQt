@@ -41,5 +41,5 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqm
 unix:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
 else:unix:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
 
-INCLUDEPATH += $(QMAPCONTROL_SRC)
-DEPENDPATH += $(QMAPCONTROL_SRC)
+INCLUDEPATH += $(QMAPCONTROL_SRC) \
+DEPENDPATH += $(QMAPCONTROL_SRC)  \
