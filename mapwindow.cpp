@@ -95,6 +95,8 @@ bool MapWindow::readCheckpoints(QString fileName)
     QPen dots_pen(QColor(0,255,0));
         dots_pen.setWidth(3);
 
+    checkPointsList.clear();
+
     while(!in.atEnd())
     {
         QString line = in.readLine();
