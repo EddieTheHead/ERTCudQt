@@ -2,6 +2,7 @@
 #define MAPWINDOW_H
 
 #include <QDialog>
+#include <QFileDialog>
 
 #include "QMapControl.h"
 #include "LayerMapAdapter.h"
@@ -10,6 +11,8 @@
 #include <GeometryLineString.h>
 #include <LayerGeometry.h>
 #include <GeometryPoint.h>
+
+#include <QMessageBox>
 
 using namespace qmapcontrol;
 
@@ -27,6 +30,7 @@ public:
 public slots:
     void newGPSPosition(float latitude, float longitude);
     void newCompassAngle(float angle);
+    void chooseNewCheckPointsFile();
 private slots:
     void drawPath();
     void drawDirection(float latitude, float longitude, float angle);

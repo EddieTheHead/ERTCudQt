@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonConnect,SIGNAL(clicked()),monitor,SLOT(openSerialPort()));
     connect(ui->pushButtonPreferences,SIGNAL(clicked()),monitor->settings,SLOT(show()));
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),monitor,SLOT(closeSerialPort()));
+    connect(ui->pushButtonCheckpoints,SIGNAL(clicked()),mapWindow,SLOT(chooseNewCheckPointsFile()));
     //sygnały wysyłane, przez monitor portu
     connect(monitor,SIGNAL(newDataArrived(QByteArray)),this,SLOT(showData(QByteArray)));
     connect(monitor,SIGNAL(newLeftVerticaTriggerValue(int)),ui->verticalSliderLeftVerticalTrigger,SLOT(setValue(int)));
@@ -32,7 +33,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
 
     connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText()));
-
 }
 
 

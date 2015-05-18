@@ -63,6 +63,12 @@ void MapWindow::newCompassAngle(float angle)
     drawDirection(points.back()->coord().latitude(),points.back()->coord().longitude(),angle);
 }
 
+void MapWindow::chooseNewCheckPointsFile()
+{
+    QString fileName = QFileDialog::getOpenFileName();
+    if(!readCheckpoints(fileName)) QMessageBox::warning(this,"Błąd otwierania pliku","Nie udało się wczytać pliku check pointów");
+}
+
 void MapWindow::drawPath()
 {
     pathLayer->clearGeometries();
