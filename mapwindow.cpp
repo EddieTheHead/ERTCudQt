@@ -126,13 +126,12 @@ void MapWindow::drawDirection(float latitude, float longitude, float angle = 0)
         return;
     }
     QTransform transMatrix;
-    transMatrix.scale(0.2,0.2);
+    transMatrix.scale(0.1,0.1);
     transMatrix.rotate(angle);
     QImage rotatedImage = pointerImage.transformed(transMatrix);
 
     auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(rotatedImage));
     pathLayer->addGeometry(roverOrientation);
-
 }
 
 void MapWindow::drawCheckpoints()
