@@ -33,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
 
     connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText()));
+    connect(PortMonitor,SIGNAL(newGPS),mapWindow,SLOT(newGPSPosition(float,float)));
 }
 
 

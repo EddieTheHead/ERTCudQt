@@ -34,6 +34,7 @@ signals:
     void newRightHorizontalTriggerValue(int);
     void newRightTriggerString(QString);
     void newCompassValue(float);
+    void newGPS(float,float);
 
     void newControlsStateString(QString);
 private slots:

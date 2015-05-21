@@ -33,6 +33,8 @@ private slots:
     void setMapButtonText();
     void on_pushButtonCheckpoints_clicked();
 
+    BateriaBar bateria;
+
 };
 
 #endif // MAINWINDOW_H
