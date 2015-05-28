@@ -29,11 +29,7 @@ private:
 private slots:
     void showData(QByteArray data);
     void on_pushButtonMap_clicked();
-    void onFakeTrackTimer();
     void setMapButtonText();
-    void on_pushButtonCheckpoints_clicked();
-
-    BateriaBar bateria;
 
 };
 
