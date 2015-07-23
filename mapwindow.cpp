@@ -40,6 +40,9 @@ MapWindow::MapWindow(QWidget *parent) :
     pointerImage = QImage("pointer.png");
     drawDirection(16.950932,52.402205,45);
 
+    map->setZoom(17);
+
+
 }
 
 MapWindow::~MapWindow()

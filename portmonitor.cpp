@@ -23,7 +23,7 @@ PortMonitor::PortMonitor(QWidget *parent)
     FirstByte = 0x54;
     LastBytes1 = 0x0D;
     LastBytes2 = 0x0A;
-    SizeOfFrame = 22;
+    SizeOfFrame = 10;
 
 }
 
