@@ -16,8 +16,8 @@ PortMonitor::PortMonitor(QWidget *parent)
     errorTimer->setSingleShot(true);
     connect(errorTimer,SIGNAL(timeout()),this,SLOT(onErrorTimer()));
 
-    logger = NULL;
-    loggerNatural = NULL;
+    logger = nullptr;
+    loggerNatural = nullptr;
 
     //z dokumentacji od Kaluby
     FirstByte = 0x54;
@@ -162,17 +162,30 @@ void PortMonitor::computeCompasValue(float lastArrivedValue)
     emit newCompassValue(mean);
 }
 
+union FloatingPointNumber
+{
+    float numeric;
+    char byte[sizeof(float)];
+};
+
+float PortMonitor::charsToFolat(char *bytes)
+{
+    union FloatingPointNumber data;
+
+    for (size_t i = 0; i < sizeof(float); ++i)
+    {
+        data.byte[i] = bytes[i];
+    }
+
+    return data.numeric;
+}
+
 qint16 PortMonitor::mergeBytes(char first, char second)
 {
     qint16 a = (unsigned char) first;
     a = a << 8;
     qint16 b = (unsigned char) second;
     return a | b;
-}
-
-float PortMonitor::charsToFolat(char *arr)
-{
-    //do implementacji
 }
 
 int PortMonitor::getSizeOfFrame() const

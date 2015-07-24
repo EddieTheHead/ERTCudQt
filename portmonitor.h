@@ -45,6 +45,8 @@ private slots:
     void onErrorTimer();
 private:
     void computeCompasValue(float lastArrivedValue);
+    float charsToFolat(char *bytes);
+
     QTimer *errorTimer;
     qint16 mergeBytes(char first, char second);
     QSerialPort *port;
