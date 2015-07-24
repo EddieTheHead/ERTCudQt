@@ -41,8 +41,6 @@ MapWindow::MapWindow(QWidget *parent) :
     drawDirection(16.950932,52.402205,45);
 
     map->setZoom(17);
-
-
 }
 
 MapWindow::~MapWindow()
@@ -55,7 +53,13 @@ void MapWindow::newGPSPosition(QPointF pos)
 {
     float latitude = pos.x();
     float longitude = pos.y();
-    if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
+    if(points.empty())
+    {
+        points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
+        drawPath();
+        map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
+    }
+    else if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
     {
         points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
         drawPath();

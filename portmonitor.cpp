@@ -23,7 +23,7 @@ PortMonitor::PortMonitor(QWidget *parent)
     FirstByte = 0x54;
     LastBytes1 = 0x0D;
     LastBytes2 = 0x0A;
-    SizeOfFrame = 10;
+    SizeOfFrame = 17;
 
 }
 
@@ -70,10 +70,18 @@ void PortMonitor::openSerialPort()
 
 void PortMonitor::closeSerialPort()
 {
-    if(logger != NULL) logger->closeFile();
-    if(loggerNatural != NULL) loggerNatural->closeFile();
-    delete logger;
-    delete loggerNatural;
+    if(logger != nullptr)
+    {
+        logger->closeFile();
+        delete logger;
+    }
+
+    if(loggerNatural != nullptr)
+    {
+        loggerNatural->closeFile();
+        delete loggerNatural;
+    }
+
     errorTimer->stop();
     port->close();
 }
@@ -122,6 +130,9 @@ void PortMonitor::readData()
 
             //opis prawego drążka
             emit newRightTriggerString(QString("Prawy drążek: %1 x %2").arg(rightHorizontalTrigger).arg(rightVerticalTrigger));
+
+            //dane z GPSa
+            emit newGPS(charTabsToQPointF(&data[7],&data[11]));
 
             //reset timera odmierzającego sekundę od ostatniej poprawnej ramki, aby wyświetlić ostrzeżenie o braku danych
             errorTimer->start();
@@ -178,6 +189,11 @@ float PortMonitor::charsToFolat(char *bytes)
     }
 
     return data.numeric;
+}
+
+QPointF PortMonitor::charTabsToQPointF(char *x, char *y)
+{
+    return QPointF(charsToFolat(x),charsToFolat(y));
 }
 
 qint16 PortMonitor::mergeBytes(char first, char second)

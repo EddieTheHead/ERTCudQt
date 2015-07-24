@@ -22,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(monitor,SIGNAL(newLeftTriggerString(QString)),ui->labelLeftTrigger,SLOT(setText(QString)));
     connect(monitor,SIGNAL(newRightTriggerString(QString)),ui->labelRightTrigger,SLOT(setText(QString)));
     connect(monitor,SIGNAL(newCompassValue(float)),mapWindow,SLOT(newCompassAngle(float)));
+    connect(monitor,SIGNAL(newGPS(QPointF)),mapWindow,SLOT(newGPSPosition(QPointF)));
     //dostosowanie kontrolek
     ui->verticalSliderLeftVerticalTrigger->setMinimum(-100);
     ui->verticalSliderLeftVerticalTrigger->setMaximum(100);

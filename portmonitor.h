@@ -46,6 +46,7 @@ private slots:
 private:
     void computeCompasValue(float lastArrivedValue);
     float charsToFolat(char *bytes);
+    QPointF charTabsToQPointF(char* x, char* y);
 
     QTimer *errorTimer;
     qint16 mergeBytes(char first, char second);
