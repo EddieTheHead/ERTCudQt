@@ -11,6 +11,7 @@
 #include <GeometryLineString.h>
 #include <LayerGeometry.h>
 #include <GeometryPoint.h>
+#include <QPointF>
 
 #include <QMessageBox>
 
@@ -28,7 +29,7 @@ public:
     explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
 public slots:
-    void newGPSPosition(float latitude, float longitude);
+    void newGPSPosition(QPointF pos);
     void newCompassAngle(float angle);
     void chooseNewCheckPointsFile();
 private slots:
@@ -37,11 +38,11 @@ private slots:
     void drawCheckpoints();
 
 private:
+    bool readCheckpoints(QString fileName); // Funkcja czytująca punkty z pliku
     Ui::MapWindow *ui;
     QMapControl *map;
     std::shared_ptr<LayerGeometry> pathLayer;
     std::vector<std::shared_ptr<GeometryPoint>> points;
-    bool readCheckpoints(QString fileName); // Funkcja czytująca punkty z pliku
     std::vector<std::shared_ptr<GeometryPoint>> checkPointsList;
     QImage pointerImage;
 };

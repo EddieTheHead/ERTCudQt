@@ -7,6 +7,7 @@
 #include <QIODevice>
 #include <QTimer>
 #include "loggingdevice.h"
+#include <QPointF>
 
 class PortSettingsWindow;
 
@@ -34,7 +35,7 @@ signals:
     void newRightHorizontalTriggerValue(int);
     void newRightTriggerString(QString);
     void newCompassValue(float);
-    void newGPS(float,float);
+    void newGPS(QPointF);
 
     void newControlsStateString(QString);
 private slots:

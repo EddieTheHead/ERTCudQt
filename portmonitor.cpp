@@ -169,6 +169,12 @@ qint16 PortMonitor::mergeBytes(char first, char second)
     qint16 b = (unsigned char) second;
     return a | b;
 }
+
+float PortMonitor::charsToFolat(char *arr)
+{
+    //do implementacji
+}
+
 int PortMonitor::getSizeOfFrame() const
 {
     return SizeOfFrame;

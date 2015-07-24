@@ -51,8 +51,10 @@ MapWindow::~MapWindow()
     delete ui;
 }
 
-void MapWindow::newGPSPosition(float longitude, float latitude)
+void MapWindow::newGPSPosition(QPointF pos)
 {
+    float latitude = pos.x();
+    float longitude = pos.y();
     if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
     {
         points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
