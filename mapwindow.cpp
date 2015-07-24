@@ -23,9 +23,11 @@ MapWindow::MapWindow(QWidget *parent) :
 
     //map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
     //dodaję warstwę z przebiegiem trasy
-    pathLayer=std::make_shared<LayerGeometry>("Base layer");
+    pathLayer=std::make_shared<LayerGeometry>("Path layer");
     map->addLayer(pathLayer);
 
+    pointerLayer=std::make_shared<LayerGeometry>("Pointer layer");
+    map->addLayer(pointerLayer);
 
     setWindowTitle("Mapa");
 
@@ -51,8 +53,9 @@ MapWindow::~MapWindow()
 
 void MapWindow::newGPSPosition(QPointF pos)
 {
-    float latitude = pos.x();
-    float longitude = pos.y();
+    float latitude = pos.y();
+    float longitude = pos.x();
+    qDebug() << "lat = " << latitude << "long = " << longitude;
     if(points.empty())
     {
         points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
@@ -140,7 +143,7 @@ void MapWindow::drawDirection(float latitude, float longitude, float angle = 0)
     QImage rotatedImage = pointerImage.transformed(transMatrix);
 
     auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(rotatedImage));
-    pathLayer->addGeometry(roverOrientation);
+    pointerLayer->addGeometry(roverOrientation);
 }
 
 void MapWindow::drawCheckpoints()

@@ -42,6 +42,7 @@ private:
     Ui::MapWindow *ui;
     QMapControl *map;
     std::shared_ptr<LayerGeometry> pathLayer;
+    std::shared_ptr<LayerGeometry> pointerLayer;
     std::vector<std::shared_ptr<GeometryPoint>> points;
     std::vector<std::shared_ptr<GeometryPoint>> checkPointsList;
     QImage pointerImage;

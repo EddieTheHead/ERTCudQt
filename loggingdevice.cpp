@@ -1,10 +1,11 @@
 #include "loggingdevice.h"
 
+
 LoggingDevice::LoggingDevice(QObject *parent)
 {
     ready = false;
     this->parent = parent;
-    file = NULL;
+    file = nullptr;
     FileNameModifier = "";
     PortName = "";
     createNewFile();
@@ -14,7 +15,7 @@ LoggingDevice::LoggingDevice(QObject *parent, QString portName)
 {
     ready = false;
     this->parent = parent;
-    file = NULL;
+    file = nullptr;
     FileNameModifier = "";
     PortName = portName;
     createNewFile();
@@ -24,7 +25,7 @@ LoggingDevice::LoggingDevice(QObject *parent, QString portName, QString nameModi
 {
     ready = false;
     this->parent = parent;
-    file = NULL;
+    file = nullptr;
     FileNameModifier = nameModifier;
     PortName = portName;
     createNewFile();
@@ -63,7 +64,7 @@ void LoggingDevice::createNewFile()
 
 void LoggingDevice::closeFile()
 {
-    if(file != NULL) file->close();
+    if(file != nullptr) file->close();
     ready = false;
 }
 
