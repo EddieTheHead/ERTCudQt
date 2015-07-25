@@ -31,6 +31,11 @@ MapWindow::MapWindow(QWidget *parent) :
 
     setWindowTitle("Mapa");
 
+    RefresDelay = 500;
+    DrawTimer.setSingleShot(false);
+    DrawTimer.setInterval(RefresDelay);
+    DrawTimer.start();
+    connect(&DrawTimer,SIGNAL(timeout()),this,SLOT(drawMap()));
 
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
@@ -40,7 +45,6 @@ MapWindow::MapWindow(QWidget *parent) :
 
     //testowe
     pointerImage = QImage("pointer.png");
-    drawDirection(16.950932,52.402205,45);
 
     map->setZoom(17);
 }
@@ -59,14 +63,14 @@ void MapWindow::newGPSPosition(QPointF pos)
     if(points.empty())
     {
         points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
-        drawPath();
         map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
+        //currentPosition->setCoord(PointWorldCoord(longitude,latitude));
+        //map->followGeometry(currentPosition);
     }
     else if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
     {
         points.emplace_back(std::make_shared<GeometryPoint>(longitude,latitude));
-        drawPath();
-        map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
+        //currentPosition->setCoord(PointWorldCoord(longitude,latitude));
     }
 }
 
@@ -95,7 +99,7 @@ void MapWindow::drawPath()
     std::shared_ptr<GeometryLineString> pathString(std::make_shared<GeometryLineString>(rawPoints));
     QPen pen(Qt::red);
     pathString->setPen(pen);
-    pen.setWidth(5);
+    pen.setWidth(10);
 
     pathLayer->addGeometry(pathString);
 }
@@ -165,4 +169,12 @@ void MapWindow::drawCheckpoints()
         // Also add the point to the custom layer.
         dots->addGeometry(point);
     }
+}
+
+void MapWindow::drawMap()
+{
+    drawPath();
+    if(!points.empty()) map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
+   //if(!points.empty()) map->followGeometry(points.back());
+
 }

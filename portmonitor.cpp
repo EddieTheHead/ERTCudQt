@@ -51,8 +51,8 @@ void PortMonitor::openSerialPort()
         port->setStopBits(p.stopBits);
 
         //Logger zapisujący ramki
-        logger = new LoggingDevice(this,p.name);
-        connect(this,SIGNAL(newDataArrived(QByteArray)),logger,SLOT(addLine(QByteArray)));
+//        logger = new LoggingDevice(this,p.name);
+//        connect(this,SIGNAL(newDataArrived(QByteArray)),logger,SLOT(addLine(QByteArray)));
 
 //        //Logger zapisujący informacje w przyjemniejszej dla człowieka formie
 //        loggerNatural = new LoggingDevice(this,p.name,"Natural");
@@ -65,7 +65,7 @@ void PortMonitor::openSerialPort()
         //nie bangla
         QMessageBox::critical(parent,"Błąd",port->errorString());
     }
-    errorTimer->start();
+    //errorTimer->start();
 }
 
 void PortMonitor::closeSerialPort()
@@ -82,13 +82,13 @@ void PortMonitor::closeSerialPort()
         delete loggerNatural;
     }
 
-    errorTimer->stop();
+    if(errorTimer != nullptr) errorTimer->stop();
     port->close();
 }
 
 void PortMonitor::readData()
 {
-    QIODevice *dev = port; //qobject_cast<QIODevice *>(sender());
+    QIODevice *dev = qobject_cast<QIODevice *>(sender());
 
     while(1) {
         if (dev->bytesAvailable()<SizeOfFrame) return; // nie ma dostępnej pełnej ramki, trzeba czekać na więcej danych
@@ -135,7 +135,7 @@ void PortMonitor::readData()
             emit newGPS(charTabsToQPointF(&data[7],&data[11]));
 
             //reset timera odmierzającego sekundę od ostatniej poprawnej ramki, aby wyświetlić ostrzeżenie o braku danych
-            errorTimer->start();
+            //errorTimer->start();
         }
     }
 }

@@ -28,7 +28,7 @@ HEADERS  += mainwindow.h \
     loggingdevice.h \
     portmonitor.h \
     portsettingswindow.h \
-    mapwindow.h \
+    mapwindow.h
 
 
 FORMS    += mainwindow.ui \

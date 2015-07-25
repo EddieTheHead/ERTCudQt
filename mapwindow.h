@@ -12,6 +12,7 @@
 #include <LayerGeometry.h>
 #include <GeometryPoint.h>
 #include <QPointF>
+#include <QTimer>
 
 #include <QMessageBox>
 
@@ -36,8 +37,11 @@ private slots:
     void drawPath();
     void drawDirection(float latitude, float longitude, float angle);
     void drawCheckpoints();
+    void drawMap();
 
 private:
+    QTimer DrawTimer;
+    int RefresDelay;
     bool readCheckpoints(QString fileName); // Funkcja czytująca punkty z pliku
     Ui::MapWindow *ui;
     QMapControl *map;
@@ -46,6 +50,7 @@ private:
     std::vector<std::shared_ptr<GeometryPoint>> points;
     std::vector<std::shared_ptr<GeometryPoint>> checkPointsList;
     QImage pointerImage;
+    std::shared_ptr<GeometryPoint> currentPosition;
 };
 
 

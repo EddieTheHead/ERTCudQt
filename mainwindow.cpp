@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
 
-    connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText()));
+    //connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText())); //nie działa- trzeba znaleźć sygnał nadawany w momencie ukrycia okineka
 }
 
 
@@ -69,5 +69,6 @@ void MainWindow::on_pushButtonMap_clicked()
 void MainWindow::setMapButtonText()
 {
     if(!mapWindow->isVisible()) ui->pushButtonMap->setText("Pokaż mapę");
+
     else ui->pushButtonMap->setText("Ukryj Mapę");
 }
