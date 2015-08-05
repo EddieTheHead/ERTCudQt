@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonPreferences,SIGNAL(clicked()),monitor->settings,SLOT(show()));
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),monitor,SLOT(closeSerialPort()));
     connect(ui->pushButtonCheckpoints,SIGNAL(clicked()),mapWindow,SLOT(chooseNewCheckPointsFile()));
+    connect(ui->checkBox_followRover,SIGNAL(clicked(bool)),mapWindow,SLOT(setFollowingRower(bool)));
     //sygnały wysyłane, przez monitor portu
     connect(monitor,SIGNAL(newDataArrived(QByteArray)),this,SLOT(showData(QByteArray)));
     connect(monitor,SIGNAL(newLeftVerticaTriggerValue(int)),ui->verticalSliderLeftVerticalTrigger,SLOT(setValue(int)));
@@ -32,6 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderLeftHorizontalTrigger->setMaximum(100);
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
+    ui->checkBox_followRover->setChecked(true);
 
     //connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText())); //nie działa- trzeba znaleźć sygnał nadawany w momencie ukrycia okineka
 }

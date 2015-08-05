@@ -100,7 +100,7 @@ void MapWindow::drawPath()
     QPen pen(Qt::red);
     pathString->setPen(pen);
     pen.setWidth(10);
-
+    if(!points.empty() && followingRower) map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
     pathLayer->addGeometry(pathString);
 }
 
@@ -131,6 +131,16 @@ bool MapWindow::readCheckpoints(QString fileName)
     file.close();
     return 1;
 }
+bool MapWindow::getFollowingRower() const
+{
+    return followingRower;
+}
+
+void MapWindow::setFollowingRower(bool value)
+{
+    followingRower = value;
+}
+
 
 void MapWindow::drawDirection(float latitude, float longitude, float angle = 0)
 {
@@ -174,7 +184,6 @@ void MapWindow::drawCheckpoints()
 void MapWindow::drawMap()
 {
     drawPath();
-    if(!points.empty()) map->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
    //if(!points.empty()) map->followGeometry(points.back());
 
 }

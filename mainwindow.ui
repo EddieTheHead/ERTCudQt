@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>381</width>
+    <width>407</width>
     <height>278</height>
    </rect>
   </property>
@@ -121,6 +121,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="checkBox_followRover">
+        <property name="text">
+         <string>Podążająca mapa</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="verticalSpacerButtons">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -142,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>381</width>
+     <width>407</width>
      <height>21</height>
     </rect>
    </property>

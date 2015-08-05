@@ -29,7 +29,10 @@ class MapWindow : public QDialog
 public:
     explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
+    bool getFollowingRower() const;
+
 public slots:
+    void setFollowingRower(bool value);
     void newGPSPosition(QPointF pos);
     void newCompassAngle(float angle);
     void chooseNewCheckPointsFile();
@@ -51,6 +54,7 @@ private:
     std::vector<std::shared_ptr<GeometryPoint>> checkPointsList;
     QImage pointerImage;
     std::shared_ptr<GeometryPoint> currentPosition;
+    bool followingRower;
 };
 
 
