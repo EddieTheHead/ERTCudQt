@@ -8,12 +8,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     monitor = new PortMonitor(this);
     mapWindow = new MapWindow(this);
+
+    setWindowTitle("CUD 2015");
     //przyciski
     connect(ui->pushButtonConnect,SIGNAL(clicked()),monitor,SLOT(openSerialPort()));
     connect(ui->pushButtonPreferences,SIGNAL(clicked()),monitor->settings,SLOT(show()));
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),monitor,SLOT(closeSerialPort()));
     connect(ui->pushButtonCheckpoints,SIGNAL(clicked()),mapWindow,SLOT(chooseNewCheckPointsFile()));
     connect(ui->checkBox_followRover,SIGNAL(clicked(bool)),mapWindow,SLOT(setFollowingRower(bool)));
+    connect(mapWindow,SIGNAL(onHide()),this,SLOT(setMapButtonText()));
     //sygnały wysyłane, przez monitor portu
     connect(monitor,SIGNAL(newDataArrived(QByteArray)),this,SLOT(showData(QByteArray)));
     connect(monitor,SIGNAL(newLeftVerticaTriggerValue(int)),ui->verticalSliderLeftVerticalTrigger,SLOT(setValue(int)));
@@ -33,9 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->horizontalSliderLeftHorizontalTrigger->setMaximum(100);
     ui->horizontalSliderRightHorizontalTrigger->setMinimum(-100);
     ui->horizontalSliderRightHorizontalTrigger->setMaximum(100);
-    ui->checkBox_followRover->setChecked(true);
-
-    //connect(mapWindow,SIGNAL(destroyed()),this,SLOT(setMapButtonText())); //nie działa- trzeba znaleźć sygnał nadawany w momencie ukrycia okineka
+    ui->checkBox_followRover->setChecked(true);    
 }
 
 
@@ -61,16 +62,21 @@ void MainWindow::showData(QByteArray data)
 
 void MainWindow::on_pushButtonMap_clicked()
 {
-    if(!mapWindow->isVisible()) mapWindow->show();
-    else mapWindow->hide();
-    setMapButtonText();
+    if(!mapWindow->isVisible())
+    {
+        mapWindow->show();
+        ui->pushButtonMap->setText("Ukryj Mapę");
+    }
+    else
+    {
+        mapWindow->hide();
 
+    }
 }
 
 
 void MainWindow::setMapButtonText()
 {
-    if(!mapWindow->isVisible()) ui->pushButtonMap->setText("Pokaż mapę");
-
-    else ui->pushButtonMap->setText("Ukryj Mapę");
+    ui->pushButtonMap->setText("Pokaż mapę");
 }
+

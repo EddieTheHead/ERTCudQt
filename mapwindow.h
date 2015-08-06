@@ -30,17 +30,21 @@ public:
     explicit MapWindow(QWidget *parent = 0);
     ~MapWindow();
     bool getFollowingRower() const;
+signals:
+    void onHide();
 
 public slots:
     void setFollowingRower(bool value);
     void newGPSPosition(QPointF pos);
     void newCompassAngle(float angle);
     void chooseNewCheckPointsFile();
+
 private slots:
     void drawPath();
     void drawDirection(float latitude, float longitude, float angle);
     void drawCheckpoints();
     void drawMap();
+    void closeEvent(QCloseEvent *event);
 
 private:
     QTimer DrawTimer;

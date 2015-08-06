@@ -85,6 +85,11 @@ void MapWindow::chooseNewCheckPointsFile()
     if(!readCheckpoints(fileName)) QMessageBox::warning(this,"Błąd otwierania pliku","Nie udało się wczytać pliku check pointów");
 }
 
+void MapWindow::closeEvent(QCloseEvent *event)
+{
+    emit onHide();
+}
+
 void MapWindow::drawPath()
 {
     pathLayer->clearGeometries();
