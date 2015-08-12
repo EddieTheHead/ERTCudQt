@@ -109,7 +109,7 @@ void PortMonitor::readData()
         {
             //dane dla loggera ramek i pola tekstowego
             emit newDataArrived(QByteArray(data,SizeOfFrame));            
-            //lewy drążek pionowy- działa ok
+/*            //lewy drążek pionowy- działa ok
             qint16 leftVerticalTrigger = mergeBytes(data[4],data[3]);
             emit newLeftVerticaTriggerValue(leftVerticalTrigger);
 
@@ -130,7 +130,7 @@ void PortMonitor::readData()
 
             //opis prawego drążka
             emit newRightTriggerString(QString("Prawy drążek: %1 x %2").arg(rightHorizontalTrigger).arg(rightVerticalTrigger));
-
+*/
             //dane z GPSa
             emit newGPS(charTabsToQPointF(&data[7],&data[11]));
 

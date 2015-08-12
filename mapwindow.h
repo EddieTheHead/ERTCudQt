@@ -45,7 +45,7 @@ private slots:
     void drawCheckpoints();
     void drawMap();
     void closeEvent(QCloseEvent *event);
-
+    void displayCoursorCoords(QMouseEvent *event, PointWorldCoord coords);
 private:
     QTimer DrawTimer;
     int RefresDelay;

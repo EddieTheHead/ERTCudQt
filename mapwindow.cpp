@@ -5,6 +5,7 @@
 #include <GeometryPointCircle.h>
 #include <LayerMapAdapter.h>
 #include <GeometryPointImage.h>
+#include <QMapControl.h>
 
 using namespace qmapcontrol;
 
@@ -19,9 +20,10 @@ MapWindow::MapWindow(QWidget *parent) :
     ui->verticalLayout->addWidget(map);
     map->enablePersistentCache();
     //dodaję warstwę z obrazkami map
-    map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Open Street Map", std::make_shared<MapAdapterOSM>()));
+   // map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Open Street Map", std::make_shared<MapAdapterOSM>()));
 
-    //map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
+    map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
+
     //dodaję warstwę z przebiegiem trasy
     pathLayer=std::make_shared<LayerGeometry>("Path layer");
     map->addLayer(pathLayer);
@@ -41,12 +43,17 @@ MapWindow::MapWindow(QWidget *parent) :
     PointWorldCoord PUT(16.950932,52.402205);
     PointWorldCoord ERC(20.452138, 50.790648);
     map->setMapFocusPoint(PUT);
-    map->setZoom(14);
-
+    map->enableScalebar(true);
     //testowe
     pointerImage = QImage("pointer.png");
 
     map->setZoom(17);
+
+    //QTimer::singleShot(1000, this, SLOT(showFullScreen()));
+
+    connect(ui->checkBox_follow,SIGNAL(clicked(bool)),this,SLOT(setFollowingRower(bool)));
+    ui->checkBox_follow->setChecked(true);
+    connect(map,SIGNAL(mouseEventPressCoordinate(QMouseEvent*,PointWorldCoord)),this,SLOT(displayCoursorCoords(QMouseEvent*,PointWorldCoord)));
 }
 
 MapWindow::~MapWindow()
@@ -88,6 +95,11 @@ void MapWindow::chooseNewCheckPointsFile()
 void MapWindow::closeEvent(QCloseEvent *event)
 {
     emit onHide();
+}
+
+void MapWindow::displayCoursorCoords(QMouseEvent* event, PointWorldCoord coords)
+{
+    ui->label_coords->setText("Położenie kursora: " + QString::number(coords.longitude()) + "x" + QString::number(coords.latitude()));
 }
 
 void MapWindow::drawPath()
