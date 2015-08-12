@@ -22,6 +22,11 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(monitor,SIGNAL(newCompassValue(float)),mapWindow,SLOT(newCompassAngle(float)));
     connect(monitor,SIGNAL(newGPS(QPointF)),mapWindow,SLOT(newGPSPosition(QPointF)));
     //dostosowanie kontrolek
+
+    //zmiana rozmiaru i przesunięcie
+    QRect rec = QApplication::desktop()->screenGeometry();
+    move(rec.width()/2,0);
+    resize(rec.width()/2,rec.height());
 }
 
 
@@ -52,7 +57,11 @@ void MainWindow::on_pushButtonMap_clicked()
         mapWindow->show();
         ui->pushButtonMap->setText("Ukryj Mapę");
     }
-    else mapWindow->hide();
+    else
+    {
+        mapWindow->hide();
+        ui->pushButtonMap->setText("Pokaż Mapę");
+    }
 }
 
 

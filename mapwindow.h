@@ -13,8 +13,9 @@
 #include <GeometryPoint.h>
 #include <QPointF>
 #include <QTimer>
-
+#include <QWindow>
 #include <QMessageBox>
+#include <QDesktopWidget>
 
 using namespace qmapcontrol;
 

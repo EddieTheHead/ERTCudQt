@@ -78,8 +78,6 @@ void BateriaBar::setSize(float value)
     size = value;
 }
 
-
-
 void BateriaBar::setValue(int value)
 {
     l= (float) value;

@@ -14,6 +14,7 @@ MapWindow::MapWindow(QWidget *parent) :
     ui(new Ui::MapWindow)
 {
     ui->setupUi(this);
+    setWindowFlags(Qt::Window);
     //nowy obiekt widgetu map
     map = new QMapControl(QSizeF(950.0, 540.0));
     //ustawiam obiekt map window na środku okienka
@@ -54,10 +55,16 @@ MapWindow::MapWindow(QWidget *parent) :
     connect(ui->checkBox_follow,SIGNAL(clicked(bool)),this,SLOT(setFollowingRower(bool)));
     ui->checkBox_follow->setChecked(true);
     connect(map,SIGNAL(mouseEventPressCoordinate(QMouseEvent*,PointWorldCoord)),this,SLOT(displayCoursorCoords(QMouseEvent*,PointWorldCoord)));
+
+    //zmiana rozmiaru i przesunięcie
+    move(0,0);
+    QRect rec = QApplication::desktop()->screenGeometry();
+    resize(rec.width()/2,rec.height());
 }
 
 MapWindow::~MapWindow()
 {
+    DrawTimer.stop();
     delete map;
     delete ui;
 }
@@ -95,6 +102,7 @@ void MapWindow::chooseNewCheckPointsFile()
 void MapWindow::closeEvent(QCloseEvent *event)
 {
     emit onHide();
+    saveGeometry();
 }
 
 void MapWindow::displayCoursorCoords(QMouseEvent* event, PointWorldCoord coords)
