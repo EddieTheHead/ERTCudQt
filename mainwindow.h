@@ -30,6 +30,9 @@ private slots:
     void showData(QByteArray data);
     void on_pushButtonMap_clicked();
     void setMapButtonText();
+    void onNewBateryVoltage(float value);
+    void onNewScalesEx(int value);
+    void onNewScalesDrill(int value);
 
 };
 
