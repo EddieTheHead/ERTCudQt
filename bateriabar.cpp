@@ -4,11 +4,14 @@
 BateriaBar::BateriaBar(QWidget *parent) :
     QGLWidget(parent)
 {
-    max=100;
+    max = 30;
+    min = 18;
     w=1;
     l=100;
     size=1;
-    //test
+    lowerGreenLimit = 21.6;
+    upperGreenLimit = 28.2;
+    yeallowLimit = 23;
 }
 
 void BateriaBar::setMaximum(int value)
@@ -38,24 +41,33 @@ void BateriaBar::paintGL()
     glPushMatrix();
     glLoadIdentity();
 
+    if(l < lowerGreenLimit || l>upperGreenLimit) glColor3f(1,0,0);
+    else glColor3f(0,1,0);
+    if(l> lowerGreenLimit && l< yeallowLimit) glColor3f(1,1,0);
+
     glBegin(GL_POLYGON);
-    if(w>=0.5)
-    {
-    glColor3f(0, 1, 0);
-    }
-    else if(w<0.5&&w>=0.2)
-    {
-        glColor3f(1, 1, 0);
-    }
-    else if(w<0.2)
-    {
-        glColor3f(1, 0, 0);
-    }
-    glVertex2f(-size/8,w*size);
-    glVertex2f(size/8,w*size);
-    glVertex2f(size/8,0);
-    glVertex2f(-size/8,0);
+     glVertex2f(-size/8,w*size);
+     glVertex2f(size/8,w*size);
+     glVertex2f(size/8,0);
+     glVertex2f(-size/8,0);
     glEnd();
+    //linie
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+     glVertex2f(-size/8,(upperGreenLimit-min)/(max-min)*size);
+     glVertex2f(size/8,(upperGreenLimit-min)/(max-min)*size);
+     glVertex2f(size/8,(upperGreenLimit-min)/(max-min)*size+0.005*size);
+     glVertex2f(-size/8,(upperGreenLimit-min)/(max-min)*size+0.005*size);
+    glEnd();
+
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+     glVertex2f(-size/8,(lowerGreenLimit-min)/(max-min)*size);
+     glVertex2f(size/8,(lowerGreenLimit-min)/(max-min)*size);
+     glVertex2f(size/8,(lowerGreenLimit-min)/(max-min)*size+0.005*size);
+     glVertex2f(-size/8,(lowerGreenLimit-min)/(max-min)*size+0.005*size);
+    glEnd();
+
     glPopMatrix();
 }
 
@@ -67,6 +79,46 @@ void BateriaBar::resizeGL(int width, int height)
     glOrtho(-size/8,size/8,0,size,-1,1);
     glMatrixMode(GL_MODELVIEW);
 }
+float BateriaBar::getYeallowLimit() const
+{
+    return yeallowLimit;
+}
+
+void BateriaBar::setYeallowLimit(float value)
+{
+    yeallowLimit = value;
+}
+
+float BateriaBar::getUpperGreenLimit() const
+{
+    return upperGreenLimit;
+}
+
+void BateriaBar::setUpperGreenLimit(float value)
+{
+    upperGreenLimit = value;
+}
+
+float BateriaBar::getLowerGreenLimit() const
+{
+    return lowerGreenLimit;
+}
+
+void BateriaBar::setLowerGreenLimit(float value)
+{
+    lowerGreenLimit = value;
+}
+
+float BateriaBar::getMin() const
+{
+    return min;
+}
+
+void BateriaBar::setMin(float value)
+{
+    min = value;
+}
+
 
 float BateriaBar::getSize() const
 {
@@ -78,16 +130,21 @@ void BateriaBar::setSize(float value)
     size = value;
 }
 
+float BateriaBar::getMax() const
+{
+    return max;
+}
+
 void BateriaBar::setValue(int value)
 {
     l= (float) value;
-    w=l/max;
+    w=(l-min)/(max-min);
     updateGL();
 }
 
 void BateriaBar::setValue(float value)
 {
     l= value;
-    w=l/max;
+    w=(l-min)/(max-min);
     updateGL();
 }
