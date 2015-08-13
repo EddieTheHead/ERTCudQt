@@ -23,8 +23,7 @@ PortMonitor::PortMonitor(QWidget *parent)
     FirstByte = 0x54;
     LastBytes1 = 0x0D;
     LastBytes2 = 0x0A;
-    SizeOfFrame = 17;
-
+    SizeOfFrame = 15;
 }
 
 PortMonitor::~PortMonitor()
@@ -97,7 +96,8 @@ void PortMonitor::readData()
         int i=0;
         for (;i<SizeOfFrame; ++i)
         {
-            if (data[i]==FirstByte) break; // znajdź początek ramki
+            //if (&data[i]==syncWord) break; // znajdź początek ramki
+            if (strncmp(&data[i],syncWord,7) == 0) break;
         }
         if (i!=0) {
             dev->read(data, i); // te dane zostaną utracone - są pozostałością poprzedniej, niepełnej ramki
@@ -131,6 +131,8 @@ void PortMonitor::readData()
             //opis prawego drążka
             emit newRightTriggerString(QString("Prawy drążek: %1 x %2").arg(rightHorizontalTrigger).arg(rightVerticalTrigger));
 */
+            //dane o baterii
+            emit newBateryVoltage(calculateBatteryVoltage(&data[0]));
             //dane z GPSa
             emit newGPS(charTabsToQPointF(&data[7],&data[11]));
 
@@ -194,6 +196,11 @@ float PortMonitor::charsToFolat(char *bytes)
 QPointF PortMonitor::charTabsToQPointF(char *x, char *y)
 {
     return QPointF(charsToFolat(x),charsToFolat(y));
+}
+
+float PortMonitor::calculateBatteryVoltage(char *data)
+{
+    return (float) data[FirstBatteryByte] + (float) data[FirstBatteryByte+1] * 0.01;
 }
 
 qint16 PortMonitor::mergeBytes(char first, char second)

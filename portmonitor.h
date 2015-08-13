@@ -27,17 +27,19 @@ public slots:
 signals:
     void newDataArrived(QByteArray);
 
-    void newLeftVerticaTriggerValue(int);
-    void newLeftHorizontalTriggerValue(int);
-    void newLeftTriggerString(QString);
+    //    void newLeftVerticaTriggerValue(int);
+    //    void newLeftHorizontalTriggerValue(int);
+    //    void newLeftTriggerString(QString);
 
-    void newRightVerticaTriggerValue(int);
-    void newRightHorizontalTriggerValue(int);
-    void newRightTriggerString(QString);
+    //    void newRightVerticaTriggerValue(int);
+    //    void newRightHorizontalTriggerValue(int);
+    //    void newRightTriggerString(QString);
     void newCompassValue(float);
     void newGPS(QPointF);
-
+    void newBateryVoltage(float);
     void newControlsStateString(QString);
+    void newScalesDrill(int);
+    void newScalesEx(int);
 private slots:
     void openSerialPort();
     void readData();
@@ -47,6 +49,7 @@ private:
     void computeCompasValue(float lastArrivedValue);
     float charsToFolat(char *bytes);
     QPointF charTabsToQPointF(char* x, char* y);
+    float calculateBatteryVoltage(char* data);
 
     QTimer *errorTimer;
     qint16 mergeBytes(char first, char second);
@@ -59,6 +62,8 @@ private:
     LoggingDevice *logger;
     LoggingDevice *loggerNatural;
     QQueue<float> LastTenCompassValues;
+    const char* syncWord = "CUD2015";
+    const int FirstBatteryByte = 8;
 };
 
 #endif // PORTMONITOR_H
