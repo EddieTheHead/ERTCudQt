@@ -60,6 +60,7 @@ private:
     QImage pointerImage;
     std::shared_ptr<GeometryPoint> currentPosition;
     bool followingRower;
+    std::shared_ptr<PointWorldCoord> ERC;
 };
 
 

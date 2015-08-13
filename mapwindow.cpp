@@ -42,7 +42,7 @@ MapWindow::MapWindow(QWidget *parent) :
 
     //spójrz na Polibudę
     PointWorldCoord PUT(16.950932,52.402205);
-    PointWorldCoord ERC(20.452138, 50.790648);
+    ERC = std::make_shared<PointWorldCoord>(PointWorldCoord(20.452138, 50.790648));
     map->setMapFocusPoint(PUT);
     map->enableScalebar(true);
     //testowe
@@ -59,7 +59,7 @@ MapWindow::MapWindow(QWidget *parent) :
     //zmiana rozmiaru i przesunięcie
     move(0,0);
     QRect rec = QApplication::desktop()->screenGeometry();
-    resize(rec.width()/2,rec.height());
+    resize(rec.width()/2 * 0.98,rec.height()*0.9);
 }
 
 MapWindow::~MapWindow()
@@ -210,5 +210,5 @@ void MapWindow::drawMap()
 {
     drawPath();
    //if(!points.empty()) map->followGeometry(points.back());
-
 }
+
