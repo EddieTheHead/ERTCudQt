@@ -21,14 +21,16 @@ SOURCES += main.cpp\
     loggingdevice.cpp \
     portmonitor.cpp \
     portsettingswindow.cpp \
-    mapwindow.cpp
+    mapwindow.cpp \
+    degminsec.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
     loggingdevice.h \
     portmonitor.h \
     portsettingswindow.h \
-    mapwindow.h
+    mapwindow.h \
+    degminsec.h
 
 
 FORMS    += mainwindow.ui \
