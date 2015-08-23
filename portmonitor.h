@@ -19,27 +19,24 @@ public:
     ~PortMonitor();
 
     PortSettingsWindow *settings;
-    int getSizeOfFrame() const;
-    void setSizeOfFrame(int value);
-
 public slots:
     void closeSerialPort();
 signals:
     void newDataArrived(QByteArray);
-
-    //    void newLeftVerticaTriggerValue(int);
-    //    void newLeftHorizontalTriggerValue(int);
-    //    void newLeftTriggerString(QString);
-
-    //    void newRightVerticaTriggerValue(int);
-    //    void newRightHorizontalTriggerValue(int);
-    //    void newRightTriggerString(QString);
     void newCompassValue(float);
     void newGPS(QPointF);
     void newBateryVoltage(float);
     void newControlsStateString(QString);
     void newScalesDrill(int);
     void newScalesEx(int);
+    void newRssiRx(int);
+    void newRssiTx(int);
+    void newRssiValue(float);
+    void newWorkingEnginesValue(bool);
+    void newNumberOfSatelites(int);
+    void newGPSSignalQuality(int);
+    void newRecieverBatteryValue(float);
+
 private slots:
     void openSerialPort();
     void readData();
@@ -49,21 +46,39 @@ private:
     void computeCompasValue(float lastArrivedValue);
     float charsToFolat(char *bytes);
     QPointF charTabsToQPointF(char* x, char* y);
-    float calculateBatteryVoltage(char* data);
+    float calculateFloatFromTwoBytes(char* data);
+    qint16 mergeBytes(char first, char second);
+
+    float TempLat;
+    float TempLon;
+    bool LatReady;
+    bool LonReady;
 
     QTimer *errorTimer;
-    qint16 mergeBytes(char first, char second);
     QSerialPort *port;
     QWidget *parent;
-    int SizeOfFrame; //wielkość ramki
-    char FirstByte;  //pierwszy bajt ramki
-    char LastBytes1; //przedostatni z bajtów ramki
-    char LastBytes2; //ostatni z bajtów ramki
     LoggingDevice *logger;
     LoggingDevice *loggerNatural;
     QQueue<float> LastTenCompassValues;
+
+    //z dokumentacji od Kaluby
+    const char FirstByte = 0x54;
+    const char LastBytes1 = 0x0D;
+    const char LastBytes2 = 0x0A;
     const char* syncWord = "CUD2015";
-    const int FirstBatteryByte = 8;
+    const int SizeOfFrame = 19;
+    const int FirstRecieverBatteryByte = 8;
+    const int FirstBatteryByte = 13;
+    const int WorkingEnginesByte = 15;
+    const int FirstRssiValueByte = 16;
+    const int RssiTxByte = 10;
+    const int RssiRxbyte = 11;
+    const int ValidGPSByte = 13;
+    const int NumberOfSatelitesByte = 13;
+    const int GpsSignalQualityByte = 13;
+    const int FirstLongitudeByte = 14;
+    const int FirstLatitudeudeByte = 14;
+
 };
 
 #endif // PORTMONITOR_H

@@ -19,11 +19,8 @@ PortMonitor::PortMonitor(QWidget *parent)
     logger = nullptr;
     loggerNatural = nullptr;
 
-    //z dokumentacji od Kaluby
-    FirstByte = 0x54;
-    LastBytes1 = 0x0D;
-    LastBytes2 = 0x0A;
-    SizeOfFrame = 15;
+    LatReady = false;
+    LonReady = false;
 }
 
 PortMonitor::~PortMonitor()
@@ -109,33 +106,49 @@ void PortMonitor::readData()
         {
             //dane dla loggera ramek i pola tekstowego
             emit newDataArrived(QByteArray(data,SizeOfFrame));            
-/*            //lewy drążek pionowy- działa ok
-            qint16 leftVerticalTrigger = mergeBytes(data[4],data[3]);
-            emit newLeftVerticaTriggerValue(leftVerticalTrigger);
 
-            //lewy drążek poziomy
-            qint16 leftHorizontalTrigger = mergeBytes(data[6],data[5]);
-            emit newLeftHorizontalTriggerValue(leftHorizontalTrigger);
+            //8 i 9 napięcie baterii
+            emit newRecieverBatteryValue((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
 
-            //opis lewego drążka
-            emit newLeftTriggerString(QString("Lewy drążek: %1 x %2").arg(leftHorizontalTrigger).arg(leftVerticalTrigger));
+            //RSSI
+            emit newRssiTx((uchar) data[RssiTxByte]);
+            emit newRssiRx((uchar) data[RssiRxbyte]);
 
-            //prawy drążek poziomy
-            qint16 rightHorizontalTrigger = mergeBytes(data[8],data[7]);
-            emit newRightHorizontalTriggerValue(rightHorizontalTrigger);
+            switch (int(data[12])) {
+            case 1:
+                emit newBateryVoltage(calculateFloatFromTwoBytes(&data[FirstBatteryByte]));
+                emit newRssiValue(calculateFloatFromTwoBytes(&data[FirstRssiValueByte]));
+                emit newWorkingEnginesValue(data[WorkingEnginesByte]);
+                break;
+            case 2:
+                if(data[ValidGPSByte])
+                {
+                    TempLon = charsToFolat(&data[FirstLongitudeByte]);
+                    LonReady = true;
+                }
+                break;
+            case 3:
+                emit newNumberOfSatelites(data[NumberOfSatelitesByte]);
+                if(data[ValidGPSByte])
+                {
+                    TempLat = charsToFolat(&data[FirstLatitudeudeByte]);
+                    LatReady = true;
+                }
+                break;
+            case 4:
+                emit newGPSSignalQuality(data[GpsSignalQualityByte]);
+                break;
+            default:
+                break;
+            }
 
-            //prawy drążek pionowy
-            qint16 rightVerticalTrigger = mergeBytes(data[10],data[9]);
-            emit newRightVerticaTriggerValue(rightVerticalTrigger);
-
-            //opis prawego drążka
-            emit newRightTriggerString(QString("Prawy drążek: %1 x %2").arg(rightHorizontalTrigger).arg(rightVerticalTrigger));
-*/
-            //dane o baterii
-            emit newBateryVoltage(calculateBatteryVoltage(&data[0]));
             //dane z GPSa
-            emit newGPS(charTabsToQPointF(&data[7],&data[11]));
-
+            if(LonReady && LatReady)
+            {
+                emit newGPS(QPointF(TempLon,TempLat));
+                LatReady = false;
+                LonReady = false;
+            }
             //reset timera odmierzającego sekundę od ostatniej poprawnej ramki, aby wyświetlić ostrzeżenie o braku danych
             //errorTimer->start();
         }
@@ -198,9 +211,11 @@ QPointF PortMonitor::charTabsToQPointF(char *x, char *y)
     return QPointF(charsToFolat(x),charsToFolat(y));
 }
 
-float PortMonitor::calculateBatteryVoltage(char *data)
+
+
+float PortMonitor::calculateFloatFromTwoBytes(char *data)
 {
-    return (float) data[FirstBatteryByte] + (float) data[FirstBatteryByte+1] * 0.01;
+    return (float) data[0] + (float) data[1] * 0.01;
 }
 
 qint16 PortMonitor::mergeBytes(char first, char second)
@@ -209,15 +224,5 @@ qint16 PortMonitor::mergeBytes(char first, char second)
     a = a << 8;
     qint16 b = (unsigned char) second;
     return a | b;
-}
-
-int PortMonitor::getSizeOfFrame() const
-{
-    return SizeOfFrame;
-}
-
-void PortMonitor::setSizeOfFrame(int value)
-{
-    SizeOfFrame = value;
 }
 

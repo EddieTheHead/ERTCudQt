@@ -22,7 +22,8 @@ SOURCES += main.cpp\
     portmonitor.cpp \
     portsettingswindow.cpp \
     mapwindow.cpp \
-    degminsec.cpp
+    degminsec.cpp \
+    workindicator.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
@@ -30,7 +31,8 @@ HEADERS  += mainwindow.h \
     portmonitor.h \
     portsettingswindow.h \
     mapwindow.h \
-    degminsec.h
+    degminsec.h \
+    workindicator.h
 
 
 FORMS    += mainwindow.ui \

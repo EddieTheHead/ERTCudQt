@@ -7,7 +7,7 @@
 #include "portmonitor.h"
 #include "bateriabar.h"
 #include "mapwindow.h"
-
+#include "workindicator.h"
 
 namespace Ui {
 class MainWindow;
@@ -31,8 +31,11 @@ private slots:
     void on_pushButtonMap_clicked();
     void setMapButtonText();
     void onNewBateryVoltage(float value);
+    void onNewReceiverBateryVoltage(float value);
+    void onNewRssiValue(float value);
     void onNewScalesEx(int value);
     void onNewScalesDrill(int value);
+    void onNewEnginesState(bool working);
 
 };
 

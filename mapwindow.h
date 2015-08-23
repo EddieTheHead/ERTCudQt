@@ -39,6 +39,8 @@ public slots:
     void newGPSPosition(QPointF pos);
     void newCompassAngle(float angle);
     void chooseNewCheckPointsFile();
+    void onNewSattelitesNumber(int number);
+    void onNewGPSSignalQuality(int value);
 
 private slots:
     void drawPath();
@@ -60,6 +62,7 @@ private:
     QImage pointerImage;
     std::shared_ptr<GeometryPoint> currentPosition;
     bool followingRower;
+    std::set<projection::EPSG> projections;
     std::shared_ptr<PointWorldCoord> ERC;
 };
 

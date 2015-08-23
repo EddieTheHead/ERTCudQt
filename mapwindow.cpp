@@ -19,12 +19,13 @@ MapWindow::MapWindow(QWidget *parent) :
     map = new QMapControl(QSizeF(950.0, 540.0));
     //ustawiam obiekt map window na środku okienka
     ui->verticalLayout->addWidget(map);
+
     map->enablePersistentCache();
     //dodaję warstwę z obrazkami map
    // map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Open Street Map", std::make_shared<MapAdapterOSM>()));
-
-    map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
-
+    projections.insert(projection::EPSG::SphericalMercator);
+   // map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
+    map->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą OSM", std::make_shared<MapAdapterTile>(QUrl("http://tile.openstreetmap.org/%zoom/%x/%y.png"), projections, 0, 19, 0, false, parent))); //testowa warstwa z własnym zoomem
     //dodaję warstwę z przebiegiem trasy
     pathLayer=std::make_shared<LayerGeometry>("Path layer");
     map->addLayer(pathLayer);
@@ -48,7 +49,8 @@ MapWindow::MapWindow(QWidget *parent) :
     //testowe
     pointerImage = QImage("pointer.png");
 
-    map->setZoom(17);
+    map->setZoomMaximum(19);
+    map->setZoom(19);
 
     //QTimer::singleShot(1000, this, SLOT(showFullScreen()));
 
@@ -99,14 +101,28 @@ void MapWindow::chooseNewCheckPointsFile()
     if(!readCheckpoints(fileName)) QMessageBox::warning(this,"Błąd otwierania pliku","Nie udało się wczytać pliku check pointów");
 }
 
+void MapWindow::onNewSattelitesNumber(int number)
+{
+    ui->label_numberOfSattelites->setText(QString("Liczba dostępnych satelitów: ") + QString::number(number));
+}
+
+void MapWindow::onNewGPSSignalQuality(int value)
+{
+    float percent = 1.0 / (float) value * 100.0;
+    ui->progressBar_SignalQuality->setValue(percent);
+    ui->label_SignalQuality->setText(QString("Jakość sygnału: ") + QString::number(value));
+}
+
 void MapWindow::closeEvent(QCloseEvent *event)
 {
+    Q_UNUSED(event);
     emit onHide();
     saveGeometry();
 }
 
 void MapWindow::displayCoursorCoords(QMouseEvent* event, PointWorldCoord coords)
 {
+    Q_UNUSED(event);
     ui->label_coords->setText("Położenie kursora: " + QString::number(coords.longitude()) + "x" + QString::number(coords.latitude()));
 }
 
