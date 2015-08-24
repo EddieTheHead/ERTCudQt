@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QDesktopWidget>
+#include <QPointF>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -46,7 +48,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mapWindow->show();
     ui->pushButtonMap->setText("Ukryj Mapę");
     //testy
-    onNewBateryVoltage(23);
+    onNewBateryVoltage(21);
     onNewReceiverBateryVoltage(11);
     onNewScalesEx(101);
     onNewScalesDrill(40);
@@ -54,6 +56,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mapWindow->onNewSattelitesNumber(10);
     mapWindow->onNewGPSSignalQuality(50);
     onNewEnginesState(false);
+    mapWindow->newGPSPosition(QPointF(53,14));
+    mapWindow->newGPSPosition(QPointF(16.951143,52.401470));
 }
 
 
