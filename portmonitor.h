@@ -36,6 +36,8 @@ signals:
     void newNumberOfSatelites(int);
     void newGPSSignalQuality(int);
     void newRecieverBatteryValue(float);
+    void connectionEstablished();
+    void connectionClosed();
 
 private slots:
     void openSerialPort();
@@ -62,22 +64,22 @@ private:
     QQueue<float> LastTenCompassValues;
 
     //z dokumentacji od Kaluby
-    const char FirstByte = 0x54;
     const char LastBytes1 = 0x0D;
     const char LastBytes2 = 0x0A;
     const char* syncWord = "CUD2015";
     const int SizeOfFrame = 19;
-    const int FirstRecieverBatteryByte = 8;
-    const int FirstBatteryByte = 13;
-    const int WorkingEnginesByte = 15;
-    const int FirstRssiValueByte = 16;
-    const int RssiTxByte = 10;
-    const int RssiRxbyte = 11;
-    const int ValidGPSByte = 13;
-    const int NumberOfSatelitesByte = 13;
-    const int GpsSignalQualityByte = 13;
-    const int FirstLongitudeByte = 14;
-    const int FirstLatitudeudeByte = 14;
+    const int FirstRecieverBatteryByte = 7;
+    const int RssiTxByte = 9;
+    const int RssiRxbyte = 10;
+    const int FrameTypeByte = 11;
+    const int FirstBatteryByte = 12;
+    const int WorkingEnginesByte = 14;
+    const int FirstRssiValueByte = 15;
+    const int ValidGPSByte = 12;
+    const int NumberOfSatelitesByte = 12;
+    const int GpsSignalQualityByte = 12;
+    const int FirstLongitudeByte = 13;
+    const int FirstLatitudeudeByte = 13;
 
 };
 

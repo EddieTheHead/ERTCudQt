@@ -53,12 +53,13 @@ void PortMonitor::openSerialPort()
 //        //Logger zapisujący informacje w przyjemniejszej dla człowieka formie
 //        loggerNatural = new LoggingDevice(this,p.name,"Natural");
 //        connect(this,SIGNAL(newControlsStateString(QString)),loggerNatural,SLOT(addLine(QString)));
-
+        emit connectionEstablished();
         qDebug() << "connected";
     }
     else
     {
         //nie bangla
+        emit connectionClosed();
         QMessageBox::critical(parent,"Błąd",port->errorString());
     }
     //errorTimer->start();
@@ -93,7 +94,6 @@ void PortMonitor::readData()
         int i=0;
         for (;i<SizeOfFrame; ++i)
         {
-            //if (&data[i]==syncWord) break; // znajdź początek ramki
             if (strncmp(&data[i],syncWord,7) == 0) break;
         }
         if (i!=0) {
@@ -108,13 +108,15 @@ void PortMonitor::readData()
             emit newDataArrived(QByteArray(data,SizeOfFrame));            
 
             //8 i 9 napięcie baterii
+            qDebug() << "data[8]" << QString::number(data[FirstRecieverBatteryByte],16) << "data[9]" << QString::number(data[FirstRecieverBatteryByte+1],16);
+            qDebug() << "Wysyłana wartość baterii odbiornika:" << ((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
             emit newRecieverBatteryValue((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
 
             //RSSI
             emit newRssiTx((uchar) data[RssiTxByte]);
             emit newRssiRx((uchar) data[RssiRxbyte]);
 
-            switch (int(data[12])) {
+            switch (int(data[FrameTypeByte])) {
             case 1:
                 emit newBateryVoltage(calculateFloatFromTwoBytes(&data[FirstBatteryByte]));
                 emit newRssiValue(calculateFloatFromTwoBytes(&data[FirstRssiValueByte]));
