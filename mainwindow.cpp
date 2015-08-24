@@ -18,7 +18,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),monitor,SLOT(closeSerialPort()));
     connect(ui->pushButtonCheckpoints,SIGNAL(clicked()),mapWindow,SLOT(chooseNewCheckPointsFile()));
     connect(mapWindow,SIGNAL(onHide()),this,SLOT(setMapButtonText()));
+    connect(ui->pushButtonDisconnect,SIGNAL(clicked()),ui->ConnctionIndicator,SLOT(setRed()));
     //sygnały wysyłane, przez monitor portu
+    connect(monitor,SIGNAL(connectionEstablished()),ui->ConnctionIndicator,SLOT(setGreen()));
+    connect(monitor,SIGNAL(connectionClosed()),ui->ConnctionIndicator,SLOT(setRed()));
     connect(monitor,SIGNAL(newDataArrived(QByteArray)),this,SLOT(showData(QByteArray)));
     connect(monitor,SIGNAL(newRssiRx(int)),ui->progressBar_Rx,SLOT(setValue(int)));
     connect(monitor,SIGNAL(newRssiTx(int)),ui->progressBar_Tx,SLOT(setValue(int)));
@@ -48,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
     mapWindow->show();
     ui->pushButtonMap->setText("Ukryj Mapę");
     //testy
+    ui->ConnctionIndicator->setRed();
     onNewBateryVoltage(21);
     onNewReceiverBateryVoltage(11);
     onNewScalesEx(101);
@@ -71,12 +75,19 @@ MainWindow::~MainWindow()
 void MainWindow::showData(QByteArray data)
 {
 
-    QString text("Ostatnia ramka: ");
+    //QString text("Ostatnia ramka: ");
     QString FrameStr(data.toHex());
-    text.append(FrameStr);
-    ui->plainTextEditLog->selectAll();
-    ui->plainTextEditLog->insertPlainText(text);
-
+    for(int i = 1; i< FrameStr.size(); ++i)
+    {
+        if(i % 3)
+        {
+            i++;
+            FrameStr.insert(i," ");
+        }
+    }
+ //   text.append(FrameStr);
+ //   ui->plainTextEditLog->selectAll();
+    ui->plainTextEditLog->insertPlainText(FrameStr + QString("\n"));
 }
 
 void MainWindow::on_pushButtonMap_clicked()
