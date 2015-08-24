@@ -47,8 +47,8 @@ void PortMonitor::openSerialPort()
         port->setStopBits(p.stopBits);
 
         //Logger zapisujący ramki
-//        logger = new LoggingDevice(this,p.name);
-//        connect(this,SIGNAL(newDataArrived(QByteArray)),logger,SLOT(addLine(QByteArray)));
+        logger = new LoggingDevice(this,p.name);
+        connect(this,SIGNAL(newDataArrived(QByteArray)),logger,SLOT(addLine(QByteArray)));
 
 //        //Logger zapisujący informacje w przyjemniejszej dla człowieka formie
 //        loggerNatural = new LoggingDevice(this,p.name,"Natural");
@@ -210,8 +210,6 @@ QPointF PortMonitor::charTabsToQPointF(char *x, char *y)
 {
     return QPointF(charsToFolat(x),charsToFolat(y));
 }
-
-
 
 float PortMonitor::calculateFloatFromTwoBytes(char *data)
 {
