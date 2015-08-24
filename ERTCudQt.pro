@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     portsettingswindow.cpp \
     mapwindow.cpp \
     degminsec.cpp \
-    workindicator.cpp
+    workindicator.cpp \
+    areasettingsdialog.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
@@ -32,12 +33,14 @@ HEADERS  += mainwindow.h \
     portsettingswindow.h \
     mapwindow.h \
     degminsec.h \
-    workindicator.h
+    workindicator.h \
+    areasettingsdialog.h
 
 
 FORMS    += mainwindow.ui \
     PortSettingsWindow.ui \
-    mapwindow.ui
+    mapwindow.ui \
+    areasettingsdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
 else:win32:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
