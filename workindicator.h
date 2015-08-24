@@ -11,9 +11,9 @@ class WorkIndicator : public QLabel
     enum state {Red,Green};
 public:
     explicit WorkIndicator(QWidget *parent = 0);
+public slots:
     void setRed();
     void setGreen();
-    //void resizeEvent(QResizeEvent *event);
 private:
     std::shared_ptr<QPixmap> redCircle;
     std::shared_ptr<QPixmap> greenCircle;
