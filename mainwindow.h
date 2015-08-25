@@ -6,8 +6,10 @@
 
 #include "portmonitor.h"
 #include "bateriabar.h"
-#include "mapwindow.h"
+//#include "mapwindow.h"
 #include "workindicator.h"
+#include "areasettingsdialog.h"
+#include "gpsdevice.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,18 +27,20 @@ signals:
 private:
     Ui::MainWindow *ui;
     PortMonitor *monitor;
-    MapWindow *mapWindow;
+    GpsDevice *mapWidget;
+    AreaSettingsDialog *AreaDialog;
+
 private slots:
+    void keyPressEvent(QKeyEvent *event);
     void showData(QByteArray data);
-    void on_pushButtonMap_clicked();
-    void setMapButtonText();
     void onNewBateryVoltage(float value);
     void onNewReceiverBateryVoltage(float value);
     void onNewRssiValue(float value);
     void onNewScalesEx(int value);
     void onNewScalesDrill(int value);
     void onNewEnginesState(bool working);
-
+    void onNewSattelitesNumber(int number);
+    void onNewGPSSignalQuality(int value);
 };
 
 #endif // MAINWINDOW_H

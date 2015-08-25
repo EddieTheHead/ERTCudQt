@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     mapwindow.cpp \
     degminsec.cpp \
     workindicator.cpp \
-    areasettingsdialog.cpp
+    areasettingsdialog.cpp \
+    gpsdevice.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
@@ -34,7 +35,8 @@ HEADERS  += mainwindow.h \
     mapwindow.h \
     degminsec.h \
     workindicator.h \
-    areasettingsdialog.h
+    areasettingsdialog.h \
+    gpsdevice.h
 
 
 FORMS    += mainwindow.ui \
