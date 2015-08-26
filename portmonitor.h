@@ -8,6 +8,7 @@
 #include <QTimer>
 #include "loggingdevice.h"
 #include <QPointF>
+#include <memory>
 
 class PortSettingsWindow;
 
@@ -38,6 +39,7 @@ signals:
     void newRecieverBatteryValue(float);
     void connectionEstablished();
     void connectionClosed();
+    void newGPSDataValid(bool);
 
 private slots:
     void openSerialPort();
@@ -55,11 +57,12 @@ private:
     float TempLon;
     bool LatReady;
     bool LonReady;
+    bool GPSValid;
 
     QTimer *errorTimer;
     QSerialPort *port;
     QWidget *parent;
-    LoggingDevice *logger;
+    std::unique_ptr<LoggingDevice> logger;
     LoggingDevice *loggerNatural;
     QQueue<float> LastTenCompassValues;
 

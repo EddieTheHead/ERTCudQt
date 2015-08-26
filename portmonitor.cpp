@@ -21,6 +21,7 @@ PortMonitor::PortMonitor(QWidget *parent)
 
     LatReady = false;
     LonReady = false;
+    GPSValid = false;
 }
 
 PortMonitor::~PortMonitor()
@@ -47,8 +48,8 @@ void PortMonitor::openSerialPort()
         port->setStopBits(p.stopBits);
 
         //Logger zapisujący ramki
-        logger = new LoggingDevice(this,p.name);
-        connect(this,SIGNAL(newDataArrived(QByteArray)),logger,SLOT(addLine(QByteArray)));
+        logger = std::unique_ptr<LoggingDevice>(new LoggingDevice(this,p.name));
+        connect(this,SIGNAL(newDataArrived(QByteArray)),logger.get(),SLOT(addLine(QByteArray)));
 
 //        //Logger zapisujący informacje w przyjemniejszej dla człowieka formie
 //        loggerNatural = new LoggingDevice(this,p.name,"Natural");
@@ -67,12 +68,6 @@ void PortMonitor::openSerialPort()
 
 void PortMonitor::closeSerialPort()
 {
-    if(logger != nullptr)
-    {
-        logger->closeFile();
-        delete logger;
-    }
-
     if(loggerNatural != nullptr)
     {
         loggerNatural->closeFile();
@@ -108,8 +103,6 @@ void PortMonitor::readData()
             emit newDataArrived(QByteArray(data,SizeOfFrame));            
 
             //8 i 9 napięcie baterii
-            qDebug() << "data[8]" << QString::number(data[FirstRecieverBatteryByte],16) << "data[9]" << QString::number(data[FirstRecieverBatteryByte+1],16);
-            qDebug() << "Wysyłana wartość baterii odbiornika:" << ((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
             emit newRecieverBatteryValue((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
 
             //RSSI
@@ -123,7 +116,9 @@ void PortMonitor::readData()
                 emit newWorkingEnginesValue(data[WorkingEnginesByte]);
                 break;
             case 2:
-                if(data[ValidGPSByte])
+                emit newGPSDataValid(data[ValidGPSByte]);
+                GPSValid = data[ValidGPSByte];
+                if(GPSValid)
                 {
                     TempLon = charsToFolat(&data[FirstLongitudeByte]);
                     LonReady = true;
@@ -131,7 +126,7 @@ void PortMonitor::readData()
                 break;
             case 3:
                 emit newNumberOfSatelites(data[NumberOfSatelitesByte]);
-                if(data[ValidGPSByte])
+                if(GPSValid)
                 {
                     TempLat = charsToFolat(&data[FirstLatitudeudeByte]);
                     LatReady = true;
