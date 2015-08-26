@@ -1,18 +1,33 @@
 #ifndef DEGMINSEC_H
 #define DEGMINSEC_H
 
+#include <QString>
+
 class DegMinSec
 {
 public:
     DegMinSec();
-    DegMinSec(float degress, float minutes, float seconds);
+    DegMinSec(int degress, int minutes, float seconds);
     DegMinSec(float decimalDegress);
 
-    float toDecimalDegress();
+    int deg() const
+    {
+        return degress;
+    }
+    int min() const
+    {
+        return minutes;
+    }
+    float sec() const
+    {
+        return seconds;
+    }
+    float toDecimalDegress() const;
+    QString toDMSString() const;
 
 private:
-    float degress;
-    float minutes;
+    int degress;
+    int minutes;
     float seconds;
 };
 

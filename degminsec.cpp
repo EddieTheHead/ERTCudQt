@@ -8,7 +8,7 @@ DegMinSec::DegMinSec()
     seconds = 0;
 }
 
-DegMinSec::DegMinSec(float degress, float minutes, float seconds)
+DegMinSec::DegMinSec(int degress, int minutes, float seconds)
 {
     this->degress = degress;
     this->minutes = minutes;
@@ -19,10 +19,15 @@ DegMinSec::DegMinSec(float decimalDegress)
 {
     degress = floor(decimalDegress);
     minutes = floor(60 * (decimalDegress - degress));
-    seconds = floor(3600 * (decimalDegress - degress - (float) minutes/60));
+    seconds = (3600 * (decimalDegress - degress - (float) minutes/60));
 }
 
-float DegMinSec::toDecimalDegress()
+float DegMinSec::toDecimalDegress() const
 {
     return (float) degress + (float) minutes/60 + (float) seconds/3600;
+}
+
+QString DegMinSec::toDMSString() const
+{
+    return QString("%1°%2'%3''").arg(degress).arg(minutes).arg(seconds,8);
 }
