@@ -2,8 +2,8 @@
 #define GPSDEVICE_H
 
 #include <QFileDialog>
-#include "QMapControl.h"
-#include "LayerMapAdapter.h"
+#include <QMapControl.h>
+#include <LayerMapAdapter.h>
 #include <MapAdapterOSM.h>
 #include <MapAdapterGoogle.h>
 #include <GeometryLineString.h>
@@ -28,24 +28,26 @@ public:
     ~GpsDevice();
     bool getFollowingRower() const;
     std::shared_ptr<GeometryPolygon> getCompetitionArea() const;
-    void setCompetitionArea(const std::shared_ptr<GeometryPolygon> &value);
 
 public slots:
+    void setCompetitionArea(const std::shared_ptr<GeometryPolygon> &value);
     void setFollowingRower(bool value);
     void newGPSPosition(QPointF pos);
     void newCompassAngle(float angle);
     void chooseNewCheckPointsFile();
+    void drawArea();
+
 
 private slots:
     void drawPath();
-    void drawDirection(float latitude, float longitude, float angle);
+    void drawDirection(float lat, float longitude, float angle);
     void drawCheckpoints();
     void drawMap();
-    void drawArea();
-    void displayCoursorCoords(QMouseEvent *event, PointWorldCoord coords);
 private:
+    //void resizeEvent(QResizeEvent *event);
     bool readCheckpoints(QString fileName); // Funkcja czytująca punkty z pliku
     void createLayers();
+
     QTimer DrawTimer;
     int RefresDelay;
     std::shared_ptr<LayerGeometry> pathLayer;

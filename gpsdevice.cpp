@@ -8,19 +8,21 @@
 #include <iostream>
 #include <QObject>
 #include <QMessageBox>
+#include <MapAdapterWMS.h>
+#include <QMapControl.h>
+#include <memory>
+
 
 using namespace qmapcontrol;
 
 
 GpsDevice::GpsDevice(QWidget *parent) :
-    QMapControl(parent->size(),parent)
+    QMapControl(parent)
 {
     //nowy obiekt widgetu map
-    QSize mapSize(size().width(),size().height() * 2/3);
-//    map = new QMapControl(mapSize);
-    this->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    this->setMinimumSize(mapSize);
-//    ui->verticalLayout_this->addWidget(map);
+    //QSize mapSize(1024,720);
+    //this->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    //this->setMinimumSize(mapSize);
 
     this->enablePersistentCache();
     createLayers();
@@ -41,7 +43,10 @@ GpsDevice::GpsDevice(QWidget *parent) :
     this->setMapFocusPoint(PUT);
     this->enableScalebar(true);
     //testowe
-    pointerImage = QImage("pointer.png");
+    pointerImage = QImage("://Pointer.png");
+    followingRower = true;
+
+    //setZoomMaximum(19);
 
 //    connect(map,SIGNAL(mouseEventPressCoordinate(QMouseEvent*,PointWorldCoord)),this,SLOT(displayCoursorCoords(QMouseEvent*,PointWorldCoord)));
 
@@ -69,33 +74,23 @@ void GpsDevice::newGPSPosition(QPointF pos)
     {
         points.emplace_back(freshPoint);
         this->setMapFocusPoint(PointWorldCoord(points.back()->coord()));
-        //currentPosition->setCoord(PointWorldCoord(longitude,latitude));
-        //this->followGeometry(currentPosition);
     }
     else if(points.back()->coord().latitude() != latitude || points.back()->coord().longitude() != longitude)
     {
         points.emplace_back(freshPoint);
-        //currentPosition->setCoord(PointWorldCoord(longitude,latitude));
     }
+    drawMap();
 }
 
 void GpsDevice::newCompassAngle(float angle)
 {
-    drawDirection(points.back()->coord().latitude(),points.back()->coord().longitude(),angle);
+    if(!points.empty()) drawDirection(points.back()->coord().latitude(),points.back()->coord().longitude(),angle);
 }
 
 void GpsDevice::chooseNewCheckPointsFile()
 {
     QString fileName = QFileDialog::getOpenFileName();
     if(!readCheckpoints(fileName)) QMessageBox::warning(this,"Błąd otwierania pliku","Nie udało się wczytać pliku check pointów");
-}
-
-
-
-void GpsDevice::displayCoursorCoords(QMouseEvent* event, PointWorldCoord coords)
-{
-    Q_UNUSED(event);
-//    ui->label_coords->setText("Położenie kursora: " + QString::number(coords.longitude()) + "x" + QString::number(coords.latitude()));
 }
 
 void GpsDevice::drawPath()
@@ -149,13 +144,15 @@ void GpsDevice::createLayers()
 {
     std::set<projection::EPSG> projections;
     projections.insert(projection::EPSG::SphericalMercator);
-    //    this->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą OSM", std::make_shared<MapAdapterTile>(QUrl("http://tile.openstreetmap.org/%zoom/%x/%y.png"),
-    //                                                                                                           projections, 0, 17, 0, false, parent))); //testowa warstwa z własnym zoomem
+    this->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą OSM",
+                                                     std::make_shared<MapAdapterTile>(QUrl("http://tile.openstreetmap.org/%zoom/%x/%y.png"),
+                                                     projections, 0, 17, 0, false))); //testowa warstwa z własnym zoomem
+
+
     pointerLayer=std::make_shared<LayerGeometry>("Pointer layer");
     this->addLayer(pointerLayer);
-    this->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
+    //this->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą Google", std::make_shared<MapAdapterGoogle>())); //testowa warstwa googlwa
 
-   // this->addLayer(std::make_shared<LayerMapAdapter>("Warstwa z mapą OSM", std::make_shared<MapAdapterTile>(QUrl("http://c.tile.thunderforest.com/landscape/%zoom/%x/%y.png"), projections, 0, 19, 0, false, parent))); //testowa warstwa z własnym zoomem
     //dodaję warstwę z przebiegiem trasy
     pathLayer=std::make_shared<LayerGeometry>("Path layer");
     this->addLayer(pathLayer);
@@ -171,6 +168,7 @@ std::shared_ptr<GeometryPolygon> GpsDevice::getCompetitionArea() const
 void GpsDevice::setCompetitionArea(const std::shared_ptr<GeometryPolygon> &value)
 {
     CompetitionArea = value;
+    drawArea();
 }
 
 bool GpsDevice::getFollowingRower() const
@@ -183,7 +181,7 @@ void GpsDevice::setFollowingRower(bool value)
     followingRower = value;
 }
 
-void GpsDevice::drawDirection(float latitude, float longitude, float angle = 0)
+void GpsDevice::drawDirection(float latitude,float longitude, float angle = 0)
 {
     PointWorldCoord pointCoord(latitude,longitude);
 
@@ -192,14 +190,15 @@ void GpsDevice::drawDirection(float latitude, float longitude, float angle = 0)
         qDebug()<<"Nie ma obrazka";
         return;
     }
+
     QTransform transMatrix;
     transMatrix.scale(0.1,0.1);
     transMatrix.rotate(angle);
     QImage rotatedImage = pointerImage.transformed(transMatrix);
 
     auto roverOrientation=std::make_shared<GeometryPointImage>(pointCoord, QPixmap::fromImage(rotatedImage));
+    pointerLayer->clearGeometries();
     pointerLayer->addGeometry(roverOrientation);
-
 }
 
 void GpsDevice::drawCheckpoints()
@@ -207,14 +206,6 @@ void GpsDevice::drawCheckpoints()
     //dodaję warstwę z punktami
     std::shared_ptr<LayerGeometry> dots(std::make_shared<LayerGeometry>("Custom Layer"));
     this->addLayer(dots);
-
-    if(!readCheckpoints("E:\\checkPoints.txt"))
-    {
-        qDebug()<<"Nie wczytano punktów";
-    }
-
-    QPen dots_pen(QColor(0,255,0));
-    dots_pen.setWidth(3);
 
     for(const auto& point : checkPointsList)
     {
@@ -233,7 +224,7 @@ void GpsDevice::drawArea()
     qDebug() << "Nowy obszar:";
     for(const auto &p:CompetitionArea->points()) qDebug() << "lon:" << QString("%1").arg(p.longitude(), 0, 'g', 5) << "lat:" << QString("%1").arg(p.latitude(), 0, 'g', 5);
     QPen pen(Qt::red);
-    pen.setWidth(3);
+    pen.setWidth(2);
     CompetitionArea->setPen(pen);
     areaLayer->clearGeometries();
     areaLayer->addGeometry(CompetitionArea);
