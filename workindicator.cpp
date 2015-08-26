@@ -46,3 +46,9 @@ void WorkIndicator::setGreen()
     }
 }
 
+void WorkIndicator::setState(bool value)
+{
+    if(value) setGreen();
+    else setRed();
+}
+

@@ -14,6 +14,7 @@ public:
 public slots:
     void setRed();
     void setGreen();
+    void setState(bool value);
 private:
     std::shared_ptr<QPixmap> redCircle;
     std::shared_ptr<QPixmap> greenCircle;
