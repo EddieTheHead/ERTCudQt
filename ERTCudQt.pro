@@ -21,28 +21,28 @@ SOURCES += main.cpp\
     loggingdevice.cpp \
     portmonitor.cpp \
     portsettingswindow.cpp \
-    mapwindow.cpp \
     degminsec.cpp \
     workindicator.cpp \
     areasettingsdialog.cpp \
-    gpsdevice.cpp
+    gpsdevice.cpp \
+    dialoglog.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
     loggingdevice.h \
     portmonitor.h \
     portsettingswindow.h \
-    mapwindow.h \
     degminsec.h \
     workindicator.h \
     areasettingsdialog.h \
-    gpsdevice.h
+    gpsdevice.h \
+    dialoglog.h
 
 
 FORMS    += mainwindow.ui \
     PortSettingsWindow.ui \
-    mapwindow.ui \
-    areasettingsdialog.ui
+    areasettingsdialog.ui \
+    dialoglog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
 else:win32:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
@@ -52,3 +52,6 @@ else:unix:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqma
 
 INCLUDEPATH += $(QMAPCONTROL_SRC) \
 DEPENDPATH += $(QMAPCONTROL_SRC)  \
+
+RESOURCES += \
+    images.qrc
