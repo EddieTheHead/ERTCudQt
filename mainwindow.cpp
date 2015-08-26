@@ -8,11 +8,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    showMaximized();
     monitor = new PortMonitor(this);
-    mapWidget = new GpsDevice(ui->widget);
-
-//    mapWidget = ui->widget;
+    mapWidget = new GpsDevice(this);
+    ui->widget_map->layout()->addWidget(mapWidget);
     setWindowTitle("CUD 2015");
+    QTimer::singleShot(500, this, SLOT(showFullScreen()));
+
+    log = new DialogLog(this);
     //przyciski
     connect(ui->pushButtonConnect,SIGNAL(clicked()),monitor,SLOT(openSerialPort()));
     connect(ui->pushButtonPreferences,SIGNAL(clicked()),monitor->settings,SLOT(show()));
@@ -20,7 +23,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->pushButtonCheckpoints,SIGNAL(clicked()),mapWidget,SLOT(chooseNewCheckPointsFile()));
     connect(ui->pushButtonDisconnect,SIGNAL(clicked()),ui->ConnctionIndicator,SLOT(setRed()));
     connect(ui->pushButton_fullscreen,SIGNAL(clicked()),this,SLOT(showFullScreen()));
+    connect(ui->pushButtonLog,SIGNAL(clicked()),log,SLOT(show()));
     //sygnały wysyłane, przez monitor portu
+    connect(monitor,SIGNAL(newDataArrived(QByteArray)),log,SLOT(appendFrame(QByteArray)));
     connect(monitor,SIGNAL(newCompassValue(float)),mapWidget,SLOT(newCompassAngle(float)));
     connect(monitor,SIGNAL(newGPS(QPointF)),mapWidget,SLOT(newGPSPosition(QPointF)));
     connect(monitor,SIGNAL(connectionEstablished()),ui->ConnctionIndicator,SLOT(setGreen()));
@@ -34,6 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(monitor,SIGNAL(newGPSSignalQuality(int)),this,SLOT(onNewGPSSignalQuality(int)));
     connect(monitor,SIGNAL(newWorkingEnginesValue(bool)),this,SLOT(onNewEnginesState(bool)));
     connect(monitor,SIGNAL(newRecieverBatteryValue(float)),this,SLOT(onNewReceiverBateryVoltage(float)));
+    connect(monitor,SIGNAL(newNumberOfSatelites(int)),ui->progressBar_numberOfSatelittes,SLOT(setValue(int)));
+    connect(monitor,SIGNAL(newGPSDataValid(bool)),ui->WorkIndicator_GPS,SLOT(setState(bool)));
     //dostosowanie kontrolek
     ui->bateriabar->setMaximum(30);
     ui->progressBar_Rx->setMaximum(127);
@@ -45,20 +52,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->bateriabar_receiver->setUpperGreenLimit(12.8);
     ui->bateriabar_receiver->setLowerGreenLimit(10);
     ui->bateriabar_receiver->setYeallowLimit(10.5);
-
-
+    ui->progressBar_numberOfSatelittes->setMaximum(12);
+    //wysyłane przez widgety
+    connect(ui->checkBox_follow,SIGNAL(clicked(bool)),mapWidget,SLOT(setFollowingRower(bool)));
     //miejsce konkursu
     AreaDialog = new AreaSettingsDialog(this);
     mapWidget->setCompetitionArea(AreaDialog->getPolygon());
-    connect(ui->checkBox_follow,SIGNAL(clicked(bool)),mapWidget,SLOT(setFollowingRower(bool)));
     connect(ui->pushButton_area,SIGNAL(clicked()),AreaDialog,SLOT(show()));
-    connect(AreaDialog,SIGNAL(onHide()),mapWidget,SLOT(drawArea()));
-    connect(AreaDialog,SIGNAL(newAreaSelected()),mapWidget,SLOT(drawArea()));
+    connect(AreaDialog,SIGNAL(areaChanged(std::shared_ptr<GeometryPolygon>)),mapWidget,SLOT(setCompetitionArea(std::shared_ptr<GeometryPolygon>)));
+    connect(this,SIGNAL(pointSelected(PointWorldCoord)),AreaDialog,SLOT(onPointSelected(PointWorldCoord)));
+    mapWidget->drawArea();
+    //mysza
+    connect(mapWidget,SIGNAL(mouseEventMoveCoordinate(QMouseEvent*,PointWorldCoord,PointWorldCoord)),
+            this,SLOT(displayMouseCoords(QMouseEvent*,PointWorldCoord,PointWorldCoord)));
+    connect(mapWidget,SIGNAL(mouseEventPressCoordinate(QMouseEvent*,PointWorldCoord)),this,SLOT(onMapPointSelected(QMouseEvent*,PointWorldCoord)));
 
     //zmiana rozmiaru i przesunięcie
-    QRect rec = QApplication::desktop()->screenGeometry();
-    move(rec.width()/2,0);
-    resize(rec.width()/2,rec.height()*0.9);
+//    QRect rec = QApplication::desktop()->screenGeometry();
+//    move(rec.width()/2,0);
+//    resize(rec.width()/2,rec.height()*0.9);
     //testy
     ui->ConnctionIndicator->setRed();
     onNewBateryVoltage(21);
@@ -71,8 +83,7 @@ MainWindow::MainWindow(QWidget *parent) :
     onNewEnginesState(false);
     mapWidget->newGPSPosition(QPointF(53,14));
     mapWidget->newGPSPosition(QPointF(16.951143,52.401470));
-
-    QTimer::singleShot(500, this, SLOT(showFullScreen()));
+    mapWidget->newCompassAngle(90);
 }
 
 
@@ -81,6 +92,7 @@ MainWindow::~MainWindow()
     delete monitor;
     delete ui;
     delete mapWidget;
+    delete log;
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -90,27 +102,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         showMaximized();
         break;
     default:
-        MainWindow::keyPressEvent(event);
         break;
     }
-}
-
-void MainWindow::showData(QByteArray data)
-{
-
-    //QString text("Ostatnia ramka: ");
-    QString FrameStr(data.toHex());
-    for(int i = 1; i< FrameStr.size(); ++i)
-    {
-        if(i % 3)
-        {
-            i++;
-            FrameStr.insert(i," ");
-        }
-    }
- //   text.append(FrameStr);
- //   ui->plainTextEditLog->selectAll();
-    ui->plainTextEditLog->insertPlainText(FrameStr + QString("\n"));
 }
 
 
@@ -193,7 +186,7 @@ void MainWindow::onNewReceiverBateryVoltage(float value)
 
 void MainWindow::onNewSattelitesNumber(int number)
 {
-    ui->label_numberOfSattelites->setText(QString("Liczba dostępnych satelitów: ") + QString::number(number));
+    ui->label_numberOfSattelites->setText(QString("Dostępnych satelitów: ") + QString::number(number));
 }
 
 void MainWindow::onNewGPSSignalQuality(int value)
@@ -201,4 +194,39 @@ void MainWindow::onNewGPSSignalQuality(int value)
     float percent = 1.0 / (float) value * 100.0;
     ui->progressBar_signalQuality->setValue(percent);
     ui->label_signalQuality->setText(QString("Jakość sygnału: ") + QString::number(value));
+}
+
+void MainWindow::displayMouseCoords(QMouseEvent*e, PointWorldCoord press,PointWorldCoord mov)
+{
+    Q_UNUSED(e);
+    Q_UNUSED(press);
+
+    if(ui->comboBox_mousePositionDisplayMode->currentText() == "DMS")
+    {
+        DegMinSec lat(mov.latitude());
+        DegMinSec lon(mov.longitude());
+
+        ui->label_mousePosition->setText(QString("Pozycja myszki: lat= ")
+                                         + lat.toDMSString()
+                                         + QString(" long = ")
+                                         + lon.toDMSString());
+    }
+
+    else ui->label_mousePosition->setText(QString("Pozycja myszki: lat= ")
+                                     + QString::number(mov.latitude())
+                                     + QString(" long = ")
+                                          + QString::number(mov.longitude()));
+}
+
+
+void MainWindow::onMapPointSelected(QMouseEvent *e, PointWorldCoord point)
+{
+    Q_UNUSED(e);
+    emit pointSelected(point);
+}
+
+void MainWindow::resizeEvent(QResizeEvent *e)
+{
+    Q_UNUSED(e);
+//    mapWidget->setViewportSize(ui->widget_map->size());
 }
