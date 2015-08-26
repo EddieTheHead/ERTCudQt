@@ -33,28 +33,88 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="groupBox_Points">
      <property name="title">
       <string>Punkty</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QLineEdit" name="lineEdit_p1"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_p1">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_p1"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_p1">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/MapSelect16.png</normaloff>:/MapSelect16.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_p2"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_p2">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_p2"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_p2">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/MapSelect16.png</normaloff>:/MapSelect16.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_p3"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_p3">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_p3"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_p3">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/MapSelect16.png</normaloff>:/MapSelect16.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QLineEdit" name="lineEdit_p4"/>
+       <layout class="QHBoxLayout" name="horizontalLayout_p4">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_p4"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_p4">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="images.qrc">
+            <normaloff>:/MapSelect16.png</normaloff>:/MapSelect16.png</iconset>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
+    <layout class="QVBoxLayout" name="verticalLayout_buttons">
      <item>
       <widget class="QPushButton" name="pushButton_ok">
        <property name="text">
@@ -70,14 +130,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_apply">
-       <property name="text">
-        <string>Zastosuj</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer">
+      <spacer name="verticalSpacer_buttons">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
@@ -93,6 +146,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="images.qrc"/>
+ </resources>
  <connections/>
 </ui>

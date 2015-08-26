@@ -19,23 +19,28 @@ class AreaSettingsDialog : public QDialog
     Q_OBJECT
 signals:
     void onHide();
-    void newAreaSelected();
+    void areaChanged(std::shared_ptr<GeometryPolygon>);
 public:
     explicit AreaSettingsDialog(QWidget *parent = 0);
     ~AreaSettingsDialog();
 
     std::shared_ptr<GeometryPolygon> getPolygon() const;
-
+public slots:
+    void onPointSelected(PointWorldCoord point);
 private slots:
-    void save();
+    void loadFromLineEdits();
     void restore();
     void createPolygon();
+    void selectFromMap();
     void closeEvent(QCloseEvent *event);
 
 private:
+    void fillLineEdits();
+
     Ui::AreaSettingsDialog *ui;
     std::shared_ptr<GeometryPolygon> polygon;
     std::vector<PointWorldCoord> points;
+    int PointToSelectOnMap;
 
 
 };
