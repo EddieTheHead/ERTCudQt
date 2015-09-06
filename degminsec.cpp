@@ -29,5 +29,5 @@ float DegMinSec::toDecimalDegress() const
 
 QString DegMinSec::toDMSString() const
 {
-    return QString("%1°%2'%3''").arg(degress).arg(minutes).arg(seconds,8);
+    return QString("%1°%2'%3''").arg(degress).arg(minutes).arg(QString::number(seconds,'f',4));
 }
