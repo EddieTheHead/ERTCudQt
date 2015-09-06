@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>Pointer.png</file>
-        <file>MapSelect16.png</file>
+        <file alias="way.txt">MapSelect16.png</file>
+        <file>G:/waypoints.txt</file>
     </qresource>
 </RCC>
