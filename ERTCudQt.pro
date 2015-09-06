@@ -9,7 +9,7 @@ QT       += core gui serialport opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = ERTCudQt
+TARGET = ERCCudQt
 TEMPLATE = app
 
 #kompilacja c++11
@@ -25,7 +25,9 @@ SOURCES += main.cpp\
     workindicator.cpp \
     areasettingsdialog.cpp \
     gpsdevice.cpp \
-    dialoglog.cpp
+    dialoglog.cpp \
+    addcheckpointdialog.cpp \
+    sonar.cpp
 
 HEADERS  += mainwindow.h \
     bateriabar.h \
@@ -36,13 +38,16 @@ HEADERS  += mainwindow.h \
     workindicator.h \
     areasettingsdialog.h \
     gpsdevice.h \
-    dialoglog.h
+    dialoglog.h \
+    addcheckpointdialog.h \
+    sonar.h
 
 
 FORMS    += mainwindow.ui \
     PortSettingsWindow.ui \
     areasettingsdialog.ui \
-    dialoglog.ui
+    dialoglog.ui \
+    addcheckpointdialog.ui
 
 win32:CONFIG(release, debug|release): LIBS += -L$(QMAPCONTROL_RELEASE_DLL) -lqmapcontrol1
 else:win32:CONFIG(debug, debug|release): LIBS += -L$(QMAPCONTROL_DEBUG_DLL) -lqmapcontrold1
