@@ -2,6 +2,9 @@
 #include "ui_areasettingsdialog.h"
 #include <QDebug>
 #include <QRegExp>
+#include "degminsec.h"
+#include <QTextStream>
+#include<QFileDialog>
 
 AreaSettingsDialog::AreaSettingsDialog(QWidget *parent) :
     QDialog(parent),
@@ -19,6 +22,11 @@ AreaSettingsDialog::AreaSettingsDialog(QWidget *parent) :
     connect(ui->lineEdit_p2,SIGNAL(editingFinished()),this,SLOT(loadFromLineEdits()));
     connect(ui->lineEdit_p3,SIGNAL(editingFinished()),this,SLOT(loadFromLineEdits()));
     connect(ui->lineEdit_p4,SIGNAL(editingFinished()),this,SLOT(loadFromLineEdits()));
+
+    connect(ui->lineEdit_p1,SIGNAL(returnPressed()),ui->pushButton_ok,SLOT(setFocus()));
+    connect(ui->lineEdit_p2,SIGNAL(returnPressed()),ui->pushButton_ok,SLOT(setFocus()));
+    connect(ui->lineEdit_p3,SIGNAL(returnPressed()),ui->pushButton_ok,SLOT(setFocus()));
+    connect(ui->lineEdit_p4,SIGNAL(returnPressed()),ui->pushButton_ok,SLOT(setFocus()));
 
     PointToSelectOnMap = 0;
 }
@@ -38,6 +46,7 @@ void AreaSettingsDialog::onPointSelected(PointWorldCoord point)
     points.at(PointToSelectOnMap-1) = point;
     PointToSelectOnMap = 0;
     createPolygon();
+    fillLineEdits();
     show();
     emit areaChanged(polygon);
 }
@@ -47,30 +56,32 @@ void AreaSettingsDialog::loadFromLineEdits()
     qDebug() << "void AreaSettingsDialog::loadFromLineEdits()";
     QLineEdit *edit = qobject_cast<QLineEdit *>(sender());
     int position = 5;
-    if(edit == ui->lineEdit_p1) position =0;
+    if(edit == ui->lineEdit_p1) position = 0;
     else if(edit == ui->lineEdit_p2) position = 1;
     else if(edit == ui->lineEdit_p3) position = 2;
     else if(edit == ui->lineEdit_p4) position = 3;
+    else return;
 
-    QRegExp rx("(\\d{1,3}\\.\\d{1,})[,|\\s]{1,}(\\d{1,3}\\.\\d{1,})");
+    QRegExp rx("(\\d{1,3})[°dh,\\s]{1,}(\\d{1,3})['m,\\s]{1,}(\\d{1,3}.\\d{1,})[s,'' ]{1,2}[ x,]{1,}(\\d{1,3})[°dh,\\s]{1,}(\\d{1,3})['m,\\s]{1,}(\\d{1,3}.\\d{1,})[s,']{1,2}");
     rx.exactMatch(edit->text());
     QStringList captured = rx.capturedTexts();
 
     QPalette palette;
-    if(captured.size() == 3 && rx.exactMatch(edit->text()))
+
+    if(captured.size() == 7 && rx.exactMatch(edit->text()))
     {
-        double latitude = captured.at(1).toDouble();
-        qDebug() << captured.at(0);
-        double longitude = captured.at(2).toDouble();
-        qDebug() << captured.at(1);
-        qDebug() << captured.at(2);
-        //if(longitude > latitude) std::swap(latitude,longitude);
-        PointWorldCoord(longitude,latitude);
-        points.at(position) = PointWorldCoord(longitude,latitude);
+        qDebug() << "if(captured.size() == 7 && rx.exactMatch(edit->text())) true";
+        DegMinSec longitude(captured.at(1).toInt(),captured.at(2).toInt(),captured.at(3).toFloat());
+        DegMinSec latitude(captured.at(4).toInt(),captured.at(5).toInt(),captured.at(6).toFloat());
+        qDebug() << "lat: " << latitude.toDMSString();
+        qDebug() << "lon: " << longitude.toDMSString();
+
+        points.at(position) = PointWorldCoord(longitude.toDecimalDegress(),latitude.toDecimalDegress());
         createPolygon();
         emit areaChanged(polygon);
         palette.setColor(QPalette::Foreground,Qt::black);;
     }
+
     else palette.setColor(QPalette::Foreground,Qt::red);
     edit->setPalette(palette);
 }
@@ -78,22 +89,22 @@ void AreaSettingsDialog::loadFromLineEdits()
 void AreaSettingsDialog::restore()
 {
     points.clear();
-    points.push_back(PointWorldCoord(16.950447,52.402715));
-    points.push_back(PointWorldCoord(16.953567,52.401908));
-    points.push_back(PointWorldCoord(16.952194,52.400003));
-    points.push_back(PointWorldCoord(16.948782,52.400933));
+    points.push_back(PointWorldCoord( 20.4617, 50.7831));
+    points.push_back(PointWorldCoord( 20.4627, 50.7828));
+    points.push_back(PointWorldCoord( 20.4614, 50.782));
+    points.push_back(PointWorldCoord( 20.4603, 50.7824));
 
-    ui->lineEdit_p1->setText("16.950447,52.402715");
-    ui->lineEdit_p2->setText("16.953567,52.401908");
-    ui->lineEdit_p3->setText("16.952194,52.400003");
-    ui->lineEdit_p4->setText("16.948782,52.400933");
+    ui->lineEdit_p1->setText(DegMinSec(points.at(0).longitude()).toDMSString() + " x " + DegMinSec(points.at(0).latitude()).toDMSString());
+    ui->lineEdit_p2->setText(DegMinSec(points.at(1).longitude()).toDMSString() + " x " + DegMinSec(points.at(1).latitude()).toDMSString());
+    ui->lineEdit_p3->setText(DegMinSec(points.at(2).longitude()).toDMSString() + " x " + DegMinSec(points.at(2).latitude()).toDMSString());
+    ui->lineEdit_p4->setText(DegMinSec(points.at(3).longitude()).toDMSString() + " x " + DegMinSec(points.at(3).latitude()).toDMSString());
     createPolygon();
     emit areaChanged(polygon);
 }
 
 void AreaSettingsDialog::createPolygon()
 {
-    polygon = std::make_shared<GeometryPolygon>(points);
+    polygon = std::make_shared<GeometryPolygon>(points,0,19);
 }
 
 void AreaSettingsDialog::selectFromMap()
@@ -108,7 +119,6 @@ void AreaSettingsDialog::selectFromMap()
     {
         hide();
     }
-    fillLineEdits();
 }
 
 void AreaSettingsDialog::closeEvent(QCloseEvent *event)
@@ -120,11 +130,24 @@ void AreaSettingsDialog::closeEvent(QCloseEvent *event)
 
 void AreaSettingsDialog::fillLineEdits()
 {
-    ui->lineEdit_p1->setText(QString::number(points.at(0).longitude(),'f',7) + "," + QString::number(points.at(0).latitude(),'f',7));
-    ui->lineEdit_p2->setText(QString::number(points.at(1).longitude(),'f',7) + "," + QString::number(points.at(1).latitude(),'f',7));
-    ui->lineEdit_p3->setText(QString::number(points.at(2).longitude(),'f',7) + "," + QString::number(points.at(2).latitude(),'f',7));
-    ui->lineEdit_p4->setText(QString::number(points.at(3).longitude(),'f',7) + "," + QString::number(points.at(3).latitude(),'f',7));
+    ui->lineEdit_p1->setText(DegMinSec(points.at(0).longitude()).toDMSString() + "x" + DegMinSec(points.at(0).latitude()).toDMSString());
+    ui->lineEdit_p2->setText(DegMinSec(points.at(1).longitude()).toDMSString() + "x" + DegMinSec(points.at(1).latitude()).toDMSString());
+    ui->lineEdit_p3->setText(DegMinSec(points.at(2).longitude()).toDMSString() + "x" + DegMinSec(points.at(2).latitude()).toDMSString());
+    ui->lineEdit_p4->setText(DegMinSec(points.at(3).longitude()).toDMSString() + "x" + DegMinSec(points.at(3).latitude()).toDMSString());
 }
 
 
 
+
+void AreaSettingsDialog::on_pushButton_saveToFile_clicked()
+{
+    QFile file(QFileDialog::getSaveFileName(this));
+    if(!file.open(QIODevice::ReadWrite | QIODevice::Text)) return;
+    QTextStream out(&file);
+    //out << ui->lineEdit_p1->text() << "\n" << ui->lineEdit_p2->text() << "\n" << ui->lineEdit_p3->text() << "\n" << ui->lineEdit_p4->text() << "\n" ;
+    for(const auto &p : points)
+    {
+        out << p.latitude() << "x" << p.longitude() << "\n";
+    }
+    file.close();
+}

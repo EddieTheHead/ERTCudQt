@@ -34,6 +34,8 @@ private slots:
     void selectFromMap();
     void closeEvent(QCloseEvent *event);
 
+    void on_pushButton_saveToFile_clicked();
+
 private:
     void fillLineEdits();
 
