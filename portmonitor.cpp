@@ -22,11 +22,15 @@ PortMonitor::PortMonitor(QWidget *parent)
     LatReady = false;
     LonReady = false;
     GPSValid = false;
+    adc2Ready[0] = false;
+    adc2Ready[1] = false;
+    adc7Ready[0] = false;
+    adc7Ready[1] = false;
+    AutoReconnect = true;
 }
 
 PortMonitor::~PortMonitor()
 {
-    //delete logger;
     delete errorTimer;
     delete port;
     delete settings;
@@ -48,8 +52,8 @@ void PortMonitor::openSerialPort()
         port->setStopBits(p.stopBits);
 
         //Logger zapisujący ramki
-        logger = std::unique_ptr<LoggingDevice>(new LoggingDevice(this,p.name));
-        connect(this,SIGNAL(newDataArrived(QByteArray)),logger.get(),SLOT(addLine(QByteArray)));
+//        logger = std::unique_ptr<LoggingDevice>(new LoggingDevice(this,p.name));
+//        connect(this,SIGNAL(newDataArrived(QByteArray)),logger.get(),SLOT(addLine(QByteArray)));
 
 //        //Logger zapisujący informacje w przyjemniejszej dla człowieka formie
 //        loggerNatural = new LoggingDevice(this,p.name,"Natural");
@@ -60,10 +64,9 @@ void PortMonitor::openSerialPort()
     else
     {
         //nie bangla
-        emit connectionClosed();
-        QMessageBox::critical(parent,"Błąd",port->errorString());
+        //QMessageBox::critical(parent,"Błąd",port->errorString());
     }
-    //errorTimer->start();
+    errorTimer->start();
 }
 
 void PortMonitor::closeSerialPort()
@@ -76,6 +79,7 @@ void PortMonitor::closeSerialPort()
 
     if(errorTimer != nullptr) errorTimer->stop();
     port->close();
+    emit connectionClosed();
 }
 
 void PortMonitor::readData()
@@ -96,11 +100,10 @@ void PortMonitor::readData()
             continue;
         }
         dev->read(data, SizeOfFrame); //właściwe odczytanie ramki z portu
-        //QByteArray array = dev->readAll();
         if (data[SizeOfFrame-1]==LastBytes2 && data[SizeOfFrame-2] == LastBytes1) //sprawdź czy 2 ostatnie bajty są zgodne z specyfikacją ramki
         {
             //dane dla loggera ramek i pola tekstowego
-            emit newDataArrived(QByteArray(data,SizeOfFrame));            
+            emit newDataArrived(QByteArray(data,SizeOfFrame));
 
             //8 i 9 napięcie baterii
             emit newRecieverBatteryValue((float) mergeBytes(data[FirstRecieverBatteryByte], data[FirstRecieverBatteryByte+1])*0.02);
@@ -134,20 +137,70 @@ void PortMonitor::readData()
                 break;
             case 4:
                 emit newGPSSignalQuality(data[GpsSignalQualityByte]);
+                emit newSonarFarLeftValue((uint) data[SonarFarLeftByte]);
+                emit newSonarCenterLeftValue((uint) data[SonarCentralLeftByte]);
+                emit newSonarCentralRightValue((uint) data[SonarCentralRightByte]);
+                emit newSonarFarRightValue((uint) data[SonarFarRightbyte]);
+                break;
+            case 5:
+                emit newLimitsState((uchar) data[LimitsByte]);
+                emit newXAxisValue(mergeBytes(data[XAxisHighByte],data[XAxisLowByte]));
+                emit newYAxisValue(mergeBytes(data[YAxisHighByte],data[YAxisLowByte]));
+                break;
+            case 6:
+                //TODO: położenie narzędzia
+                emit newCameraPosition(mergeBytes(data[CameraPositionHighByte],data[CameraPositionLowByte]));
+                emit newToolPosition(mergeBytes(data[ToolPositionHighByte],data[ToolPositionLowByte]));
+                tempAdc7[0] = data[ADC27byte];
+                adc7Ready[0] = true;
+                break;
+            case 7:
+                tempAdc2[0] = data[ADC27byte];
+                adc2Ready[0] = true;
+                emit newAdcValue(0,mergeBytes(data[HighADC035Byte],data[LowADC035Byte]));
+                emit newAdcValue(1,mergeBytes(data[HighADC146Byte],data[LowADC146Byte]));
+                break;
+            case 8:
+                tempAdc7[1] = data[ADC27byte];
+                adc7Ready[1] = true;
+                emit newAdcValue(3,mergeBytes(data[HighADC035Byte],data[LowADC035Byte]));
+                emit newAdcValue(4,mergeBytes(data[HighADC146Byte],data[LowADC146Byte]));
+                break;
+            case 9:
+                tempAdc7[1] = data[ADC27byte];
+                adc7Ready[1] = true;
+                emit newAdcValue(5,mergeBytes(data[HighADC035Byte],data[LowADC035Byte]));
+                emit newAdcValue(6,mergeBytes(data[HighADC146Byte],data[LowADC146Byte]));
+                break;
+            case 10:
+                emit newCompassValue((-1 * (int) mergeBytes(data[HighCompassByte],data[LowCompassByte]) +390)%360);
+                emit newMysteryServoValue((int) mergeBytes(data[MysteryServoHighByte],data[MysteryServoLowByte]));
+                qDebug() <<  (int) mergeBytes(data[MysteryServoHighByte],data[MysteryServoLowByte]);
                 break;
             default:
                 break;
             }
-
             //dane z GPSa
-            if(LonReady && LatReady)
+            if(LonReady && LatReady )
             {
-                emit newGPS(QPointF(TempLon,TempLat));
+               // qDebug() << "emit newGPS(qmapcontrol::PointWorldCoord(TempLon,TempLat));";
+                emit newGPS(qmapcontrol::PointWorldCoord(TempLon,TempLat));
+//                emit newGPS(qmapcontrol::PointWorldCoord(TempLat,TempLon));
                 LatReady = false;
                 LonReady = false;
             }
+            //adc 7 i 2
+            if(adc2Ready[0] && adc2Ready[1])
+            {
+                emit newAdcValue(2,mergeBytes(tempAdc2[0],tempAdc2[1]));
+            }
+            if(adc7Ready[0] && adc7Ready[1])
+            {
+                emit newAdcValue(7,mergeBytes(tempAdc7[0],tempAdc7[1]));
+            }
+
             //reset timera odmierzającego sekundę od ostatniej poprawnej ramki, aby wyświetlić ostrzeżenie o braku danych
-            //errorTimer->start();
+            errorTimer->start();
         }
     }
 }
@@ -163,7 +216,9 @@ void PortMonitor::handleError(QSerialPort::SerialPortError error)
 
 void PortMonitor::onErrorTimer()
 {
-    QMessageBox::warning(parent,"Przekroczenie czasu","Od nadejścia ostatniej poprawnej ramki minęła ponad sekunda");
+    //QMessageBox::warning(parent,"Przekroczenie czasu","Od nadejścia ostatniej poprawnej ramki minęła ponad sekunda");
+    closeSerialPort();
+    if(AutoReconnect) openSerialPort();
 }
 
 void PortMonitor::computeCompasValue(float lastArrivedValue)
@@ -172,8 +227,6 @@ void PortMonitor::computeCompasValue(float lastArrivedValue)
 
     //dodaje na koniec kolejki nową wartość kompasu
     LastTenCompassValues.enqueue(lastArrivedValue);
-    //usunięcie najstarszej wartości
-    LastTenCompassValues.dequeue();
     //średnia z ostatnich dziesięciu pomiarów kompasu
     float mean = 0;
     for(const auto &i : LastTenCompassValues)
@@ -181,6 +234,7 @@ void PortMonitor::computeCompasValue(float lastArrivedValue)
         mean += i;
     }
     mean /= LastTenCompassValues.size();
+    if (LastTenCompassValues.size() > 10) LastTenCompassValues.dequeue();
 
     emit newCompassValue(mean);
 }
@@ -220,4 +274,14 @@ qint16 PortMonitor::mergeBytes(char first, char second)
     qint16 b = (unsigned char) second;
     return a | b;
 }
+bool PortMonitor::getAutoReconnect() const
+{
+    return AutoReconnect;
+}
+
+void PortMonitor::setAutoReconnect(bool value)
+{
+    AutoReconnect = value;
+}
+
 

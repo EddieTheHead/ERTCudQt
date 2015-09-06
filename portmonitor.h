@@ -9,6 +9,8 @@
 #include "loggingdevice.h"
 #include <QPointF>
 #include <memory>
+#include <Point.h>
+using namespace qmapcontrol;
 
 class PortSettingsWindow;
 
@@ -20,14 +22,16 @@ public:
     ~PortMonitor();
 
     PortSettingsWindow *settings;
+    bool getAutoReconnect() const;
+
 public slots:
     void closeSerialPort();
+    void setAutoReconnect(bool value);
 signals:
     void newDataArrived(QByteArray);
     void newCompassValue(float);
-    void newGPS(QPointF);
+    void newGPS(PointWorldCoord);
     void newBateryVoltage(float);
-    void newControlsStateString(QString);
     void newScalesDrill(int);
     void newScalesEx(int);
     void newRssiRx(int);
@@ -40,6 +44,17 @@ signals:
     void connectionEstablished();
     void connectionClosed();
     void newGPSDataValid(bool);
+    void newLimitsState(uchar);
+    void newAdcValue(int,int); //numer adc, wartość
+    void newSonarFarLeftValue(int);
+    void newSonarCenterLeftValue(int);
+    void newSonarFarRightValue(int);
+    void newSonarCentralRightValue(int);
+    void newXAxisValue(int);
+    void newYAxisValue(int);
+    void newCameraPosition(int);
+    void newToolPosition(int);
+    void newMysteryServoValue(int);
 
 private slots:
     void openSerialPort();
@@ -59,6 +74,12 @@ private:
     bool LonReady;
     bool GPSValid;
 
+    bool adc7Ready[2];
+    bool adc2Ready[2];
+    char tempAdc2[2];
+    char tempAdc7[2];
+
+    bool AutoReconnect;
     QTimer *errorTimer;
     QSerialPort *port;
     QWidget *parent;
@@ -83,6 +104,28 @@ private:
     const int GpsSignalQualityByte = 12;
     const int FirstLongitudeByte = 13;
     const int FirstLatitudeudeByte = 13;
+    const int LowCompassByte = 12;
+    const int HighCompassByte = 13;
+    const int MysteryServoLowByte = 14;
+    const int MysteryServoHighByte = 15;
+    const int LowADC035Byte = 12;
+    const int HighADC035Byte = 13;
+    const int LowADC146Byte = 14;
+    const int HighADC146Byte = 15;
+    const int ADC27byte= 16;
+    const int LimitsByte = 12;
+    const int SonarFarLeftByte = 13;
+    const int SonarCentralLeftByte = 14;
+    const int SonarCentralRightByte = 15;
+    const int SonarFarRightbyte = 16;
+    const int XAxisHighByte = 16;
+    const int XAxisLowByte = 15;
+    const int YAxisHighByte = 14;
+    const int YAxisLowByte = 13;
+    const int ToolPositionHighByte = 13;
+    const int ToolPositionLowByte = 12;
+    const int CameraPositionHighByte = 15;
+    const int CameraPositionLowByte = 14;
 
 };
 
