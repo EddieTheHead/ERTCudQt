@@ -21,7 +21,7 @@ PortSettingsWindow::PortSettingsWindow(QWidget *parent) :
     connect(ui->pushButton_apply,SIGNAL(clicked()),this,SLOT(apply()));
     connect(ui->comboBox_Port,SIGNAL(currentIndexChanged(int)),this,SLOT(showPortInfo(int)));
     connect(ui->comboBox_baudRate,SIGNAL(currentIndexChanged(int)),this,SLOT(checkCustomBaudRatePolicy(int)));
-
+    connect(ui->pushButton_refresh,SIGNAL(clicked()),this,SLOT(fillPortsInfo()));
     fillPortsParameters();
     fillPortsInfo();
 

@@ -41,10 +41,10 @@ private slots:
     void showPortInfo(int idx);
     void apply();
     void checkCustomBaudRatePolicy(int idx);
+    void fillPortsInfo();
 
 private:
     void fillPortsParameters();
-    void fillPortsInfo();
     void updateSettings();
 
     Ui::PortSettingsWindow *ui;
