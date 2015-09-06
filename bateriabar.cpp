@@ -56,16 +56,16 @@ void BateriaBar::paintGL()
     glBegin(GL_POLYGON);
      glVertex2f(-size/8,(upperGreenLimit-min)/(max-min)*size);
      glVertex2f(size/8,(upperGreenLimit-min)/(max-min)*size);
-     glVertex2f(size/8,(upperGreenLimit-min)/(max-min)*size+0.005*size);
-     glVertex2f(-size/8,(upperGreenLimit-min)/(max-min)*size+0.005*size);
+     glVertex2f(size/8,(upperGreenLimit-min)/(max-min)*size+0.007*size);
+     glVertex2f(-size/8,(upperGreenLimit-min)/(max-min)*size+0.007*size);
     glEnd();
 
     glColor3f(1,0,0);
     glBegin(GL_POLYGON);
      glVertex2f(-size/8,(lowerGreenLimit-min)/(max-min)*size);
      glVertex2f(size/8,(lowerGreenLimit-min)/(max-min)*size);
-     glVertex2f(size/8,(lowerGreenLimit-min)/(max-min)*size+0.005*size);
-     glVertex2f(-size/8,(lowerGreenLimit-min)/(max-min)*size+0.005*size);
+     glVertex2f(size/8,(lowerGreenLimit-min)/(max-min)*size+0.007*size);
+     glVertex2f(-size/8,(lowerGreenLimit-min)/(max-min)*size+0.007*size);
     glEnd();
 
     glPopMatrix();
