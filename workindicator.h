@@ -7,7 +7,6 @@
 class WorkIndicator : public QLabel
 {
     Q_OBJECT
-
     enum state {Red,Green};
 public:
     explicit WorkIndicator(QWidget *parent = 0);

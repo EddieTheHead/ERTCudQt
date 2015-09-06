@@ -9,22 +9,21 @@ WorkIndicator::WorkIndicator(QWidget *parent) :
 
     redCircle = std::make_shared<QPixmap>(width(),height());
     std::unique_ptr<QPainter> paintRed(new QPainter(redCircle.get()));
-    QPen redPen(Qt::red);
+    paintRed->setRenderHint(QPainter::Antialiasing);
     QBrush redBrush(Qt::red);
-    paintRed->setPen(redPen);
+    paintRed->setPen(Qt::NoPen);
     paintRed->setBrush(redBrush);
     paintRed->fillRect(0,0,width(),height(),parent->palette().color(QPalette::Background));
-    paintRed->drawEllipse(0,height()/4.0,width()/2.2,height()/2.2);
+    paintRed->drawEllipse(0,height()/4,width()/2,height()/2);
 
     greenCircle = std::make_shared<QPixmap>(width(),height());
     std::unique_ptr<QPainter> paintGreen(new QPainter(greenCircle.get()));
-    QPen greenPen(Qt::green);
+    paintGreen->setRenderHint(QPainter::Antialiasing);
     QBrush greenBrush(Qt::green);
-    paintGreen->setPen(greenPen);
+    paintGreen->setPen(Qt::NoPen);
     paintGreen->setBrush(greenBrush);
     paintGreen->fillRect(0,0,width(),height(),parent->palette().color(QPalette::Background));
-    paintGreen->drawEllipse(0,height()/4.0,width()/2.2,height()/2.2);
-
+    paintGreen->drawEllipse(0,height()/4,width()/2 ,height()/2);
     setGreen();
 }
 
