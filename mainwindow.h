@@ -45,6 +45,12 @@ private slots:
     void onNewGPSSignalQuality(int value);
     void displayMouseCoords(QMouseEvent *e, PointWorldCoord press, PointWorldCoord mov);
     void onMapPointSelected(QMouseEvent *e,PointWorldCoord point);
+    void onNewRssiRx(int value);
+    void onNewRssiTx(int value);
+    void onNewLimitsState(uchar value);
+    void onNewAdcValue(int adc,int value);
+    void on_pushButton_addCheckPoint_clicked();
+    void onNewCompassValue(float value);
 };
 
 #endif // MAINWINDOW_H
